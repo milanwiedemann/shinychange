@@ -1,0 +1,12 @@
+name: shinychange
+title: shinychange
+username:
+account: milanwiedemann
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1495016
+bundleId: 2601780
+url: https://milanwiedemann.shinyapps.io/shinychange/
+when: 1574200763.09153
+asMultiple: FALSE
+asStatic: FALSE
