@@ -49,6 +49,8 @@ ui <-  tagList(
 
             tabPanel("Simulated Data",
                      DT::dataTableOutput('datatable_sim_uni_lcsm')),
+            downloadButton("download_bi_data", "Download"),
+          
             tabPanel("Longitudinal Plot",
                      plotOutput("plot_sim_uni_lcsm")),
             tabPanel("lavaan Code",
