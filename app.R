@@ -7,37 +7,46 @@ library(DT)
 
 # ui ----
 ui <-  tagList(
-    navbarPage("lcsm",
+    navbarPage("lcsm", collapsable = FALSE,
                
       # Overview ----
-      # tabPanel("Overview", 
-      #          "What can this shinyapp do?
-      #          Add links to GitHub and stuff.
-      #          Add references here too at the bottom."),
+      tabPanel("Overview",
+               "What can this shinyapp do?
+               Add links to GitHub and stuff.
+               Add references here too at the bottom."),
 
       # Simulate univariate LCSM ----
       navbarMenu("Simulate Data", 
       tabPanel("Univariate LCSM",
-        sidebarPanel(width = 2,
-          h4("Data Characteristics:"),
-          numericInput("sim_uni_timepoints", "Measurement Points:", value = 10),
-          numericInput("sim_uni_samplesize", "Sample Size:", value = 500),
-          sliderInput("sim_uni_na_x_pct", "Missingness:", min = 0, max = 100, value = 0, step = 1),
-          # actionButton("simulate_action", "Simulate Data", class = "btn-primary")
-          ),
-        mainPanel(
+               column(width = 4, h4("Options:"),
+                      tabsetPanel(
+                        tabPanel("Data Characteristics",
+                                 wellPanel(
+                                 numericInput("sim_uni_timepoints", "Measurement Points:", value = 10),
+                                 numericInput("sim_uni_samplesize", "Sample Size:", value = 500),
+                                 sliderInput("sim_uni_na_x_pct", "Missingness:", min = 0, max = 100, value = 0, step = 1),
+                                 # actionButton("simulate_action", "Simulate Data", class = "btn-primary")
+                                 )
+                                 ),
+                        tabPanel("Parameters",
+                                 wellPanel(
+                                   numericInput("sim_uni_gamma_lx1", "gamma_lx1", value = 0, step = .1),
+                                   numericInput("sim_uni_sigma2_lx1", "sigma2_lx1", value = .5, step = .1),
+                                   numericInput("sim_uni_sigma2_ux", "sigma2_ux", value = .2, step = .1),
+                                   numericInput("sim_uni_beta", "beta", value = -.1, step = .1),
+                                   numericInput("sim_uni_alpha_g2", "alpha_g2", value = -.4, step = .1),
+                                   numericInput("sim_uni_sigma2_g2", "sigma2_g2", value = .4, step = .1),
+                                   numericInput("sim_uni_sigma_g2lx1", "sigma_g2lx1", value = .2, step = .1),
+                                   numericInput("sim_uni_phi", "phi", value = NA, step = .1)
+                                 )
+                                 ),
+                        tabPanel("Help",
+                                 "Explain parameters here!")
+
+          )),
+          column(width = 8, h4("Results:"),
           tabsetPanel(
-            tabPanel("Parameters",
-                     column(3, wellPanel(
-                         h4("Construct X"),
-                         numericInput("sim_uni_gamma_lx1", "gamma_lx1", value = 0, step = .1),
-                         numericInput("sim_uni_sigma2_lx1", "sigma2_lx1", value = .5, step = .1),
-                         numericInput("sim_uni_sigma2_ux", "sigma2_ux", value = .2, step = .1),
-                         numericInput("sim_uni_beta", "beta", value = -.1, step = .1),
-                         numericInput("sim_uni_alpha_g2", "alpha_g2", value = -.4, step = .1),
-                         numericInput("sim_uni_sigma2_g2", "sigma2_g2", value = .4, step = .1),
-                         numericInput("sim_uni_sigma_g2lx1", "sigma_g2lx1", value = .2, step = .1),
-                         numericInput("sim_uni_phi", "phi", value = NA, step = .1)))),
+
             tabPanel("Simulated Data",
                      DT::dataTableOutput('datatable_sim_uni_lcsm')),
             tabPanel("Longitudinal Plot",
@@ -52,56 +61,67 @@ ui <-  tagList(
       
       # Simulate bivariate LCSM ----
       tabPanel("Bivariate LCSM",
-               sidebarPanel(width = 2,
-          h4("Data Characteristics:"),
+               column(width = 4, h4("Options:"),
+                      tabsetPanel(
+                        tabPanel("Data Characteristics",
+                                 wellPanel(
           numericInput("sim_bi_timepoints", "Measurement Points:", value = 6, min = 2),
           numericInput("sim_bi_samplesize", "Sample Size:", value = 500),
           sliderInput("sim_bi_na_x_pct", "Missingness Construct X:", min = 0, max = 100, value = 0, step = 1),
           sliderInput("sim_bi_na_y_pct", "Missingness Construct Y:", min = 0, max = 100, value = 0, step = 1),
           # actionButton("simulate_action", "Simulate data", class = "btn-primary")
+                                 )
         ),
-        mainPanel(
-          tabsetPanel(
-            tabPanel("Parameters",
-              column(3, wellPanel(h4("Construct X"),
-                  numericInput("sim_bi_gamma_lx1", "gamma_lx1", value = 0, step = .1),
-                  numericInput("sim_bi_sigma2_lx1", "sigma2_lx1", value = .5, step = .1),
-                  numericInput("sim_bi_sigma2_ux", "sigma2_ux", value = .2, step = .1),
-                  numericInput("sim_bi_beta_x", "beta_x", value = -.1, step = .1),
-                  numericInput("sim_bi_alpha_g2", "alpha_g2", value = -.4, step = .1),
-                  numericInput("sim_bi_sigma2_g2", "sigma2_g2", value = .4, step = .1),
-                  numericInput("sim_bi_sigma_g2lx1", "sigma_g2lx1", value = .2, step = .1),
-                  numericInput("sim_bi_phi_x", "phi_x", value = NA, step = .1)
-                )
-              ),
-              column(3, wellPanel(h4("Construct Y"),
-                  numericInput("sim_bi_gamma_ly1", "gamma_ly1", value = 5, step = .1),
-                  numericInput("sim_bi_sigma2_ly1", "sigma2_ly1", value = .2, step = .1),
-                  numericInput("sim_bi_sigma2_uy", "sigma2_uy", value = .2, step = .1),
-                  numericInput("sim_bi_beta_y", "beta_y", value = -.2, step = .1),
-                  numericInput("sim_bi_alpha_j2", "alpha_j2", value = -.2, step = .1),
-                  numericInput("sim_bi_sigma2_j2", "sigma2_j2", value = .1, step = .1),
-                  numericInput("sim_bi_sigma_j2ly1", "sigma_j2ly1", value = .02, step = .1),
-                  numericInput("sim_bi_phi_y", "phi_y", value = .1, step = .1)
-                  )
-              ),
-              column(3, wellPanel(h4("Coupling"),
-                  numericInput("sim_bi_sigma_su", "sigma_su", value = .01, step = .1),
-                  numericInput("sim_bi_sigma_ly1lx1", "sigma_ly1lx1", value = .2, step = .1),
-                  numericInput("sim_bi_sigma_g2ly1", "sigma_g2ly1", value = .1, step = .1),
-                  numericInput("sim_bi_sigma_j2lx1", "sigma_j2lx1", value = .1, step = .1),
-                  numericInput("sim_bi_sigma_j2g2", "sigma_j2g2", value = .01, step = .1),
-                  numericInput("sim_bi_delta_lag_xy", "delta_lag_xy", value = .13, step = .1),
-                  numericInput("sim_bi_delta_lag_yx", "delta_lag_yx", value = NA, step = .1),
-                  numericInput("sim_bi_xi_lag_xy", "xi_lag_xy", value = NA, step = .1),
-                  numericInput("sim_bi_xi_lag_yx", "xi_lag_yx", value = .4, step = .1),
-                )
-              )
-            ),
+        tabPanel("Parameters",
+                 tabsetPanel(
+                   tabPanel("Construct X",
+                            wellPanel(
+                                      numericInput("sim_bi_gamma_lx1", "gamma_lx1", value = 0, step = .1),
+                                      numericInput("sim_bi_sigma2_lx1", "sigma2_lx1", value = .5, step = .1),
+                                      numericInput("sim_bi_sigma2_ux", "sigma2_ux", value = .2, step = .1),
+                                      numericInput("sim_bi_beta_x", "beta_x", value = -.1, step = .1),
+                                      numericInput("sim_bi_alpha_g2", "alpha_g2", value = -.4, step = .1),
+                                      numericInput("sim_bi_sigma2_g2", "sigma2_g2", value = .4, step = .1),
+                                      numericInput("sim_bi_sigma_g2lx1", "sigma_g2lx1", value = .2, step = .1),
+                                      numericInput("sim_bi_phi_x", "phi_x", value = NA, step = .1)
+                            )),
+                   tabPanel("Construct Y",
+                            wellPanel(
+                                      numericInput("sim_bi_gamma_ly1", "gamma_ly1", value = 5, step = .1),
+                                      numericInput("sim_bi_sigma2_ly1", "sigma2_ly1", value = .2, step = .1),
+                                      numericInput("sim_bi_sigma2_uy", "sigma2_uy", value = .2, step = .1),
+                                      numericInput("sim_bi_beta_y", "beta_y", value = -.2, step = .1),
+                                      numericInput("sim_bi_alpha_j2", "alpha_j2", value = -.2, step = .1),
+                                      numericInput("sim_bi_sigma2_j2", "sigma2_j2", value = .1, step = .1),
+                                      numericInput("sim_bi_sigma_j2ly1", "sigma_j2ly1", value = .02, step = .1),
+                                      numericInput("sim_bi_phi_y", "phi_y", value = .1, step = .1)
+                            )),
+                   tabPanel("Coupling",
+                            wellPanel(
+                                      numericInput("sim_bi_sigma_su", "sigma_su", value = .01, step = .1),
+                                      numericInput("sim_bi_sigma_ly1lx1", "sigma_ly1lx1", value = .2, step = .1),
+                                      numericInput("sim_bi_sigma_g2ly1", "sigma_g2ly1", value = .1, step = .1),
+                                      numericInput("sim_bi_sigma_j2lx1", "sigma_j2lx1", value = .1, step = .1),
+                                      numericInput("sim_bi_sigma_j2g2", "sigma_j2g2", value = .01, step = .1),
+                                      numericInput("sim_bi_delta_lag_xy", "delta_lag_xy", value = .13, step = .1),
+                                      numericInput("sim_bi_delta_lag_yx", "delta_lag_yx", value = NA, step = .1),
+                                      numericInput("sim_bi_xi_lag_xy", "xi_lag_xy", value = NA, step = .1),
+                                      numericInput("sim_bi_xi_lag_yx", "xi_lag_yx", value = .4, step = .1),
+                            ))
+                   )
+
+        ),
+        tabPanel("Help",
+                 "Explain parameters here!")
+        )),
+        column(width = 8, h4("Results:"),
+               tabsetPanel(
             tabPanel("Simulated Data",
-                     DT::dataTableOutput('datatable_sim_bi_lcsm')),
+                     DT::dataTableOutput('datatable_sim_bi_lcsm'),
+                     downloadButton("download_bi_data", "Download")),
             tabPanel("Longitudinal Plots",
-                     plotOutput("plot_sim_bi_lcsm", width = 1000, height = 600)),
+                     plotOutput("plot_sim_bi_lcsm", width = 850, height = 550),
+                     downloadButton('download_plot_sim_bi_lcsm', "Download")),
             tabPanel("lavaan Code",
                      verbatimTextOutput("lavaan_sim_bi_lcsm"))
             # tabPanel("Path diagram",
@@ -154,6 +174,8 @@ ui <-  tagList(
       # Specify univariate LCSM ----
       navbarMenu("lavaan Syntax",
       tabPanel("Univariate LCSM",
+               fluidPage(
+                 fluidRow(
                column(width = 2, h4("Data Characteristics:"),
                       wellPanel(numericInput("specify_uni_timepoints", "Measurement Points:", value = 5, min = 2),
                                 helpText("Note: Number of repeated measurement points.")),
@@ -176,6 +198,7 @@ ui <-  tagList(
                                   This syntax can be modified by hand and used in the 'model' argument of the function 'lavaan::lavaan()'"),
                                 verbatimTextOutput("lavaan_uni_lcsm")
                       )
+               ))
                )),
       # Specify bivariate LCSM ----
       tabPanel("Bivariate LCSM",
@@ -420,6 +443,16 @@ server <-  function(input, output) {
                  na_pct = input$sim_uni_na_x_pct / 100)
   })
   
+  # Downloadable csv of selected dataset ----
+  output$download_uni_data <- downloadHandler(
+    filename = function() {
+      paste("uni_lcsm_sim_data", ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(simulate_uni_lcsm(), file, row.names = FALSE)
+    }
+  )
+  
   # Create data table
   output$datatable_sim_uni_lcsm <- DT::renderDataTable(
   
@@ -545,23 +578,17 @@ server <-  function(input, output) {
                                       xi_lag_yx = sim_bi_xi_lag_yx),
                 sample.nobs = input$sim_bi_samplesize
                 )
-    
-    
-    # sim_uni_lcsm(timepoints = input$sim_uni_timepoints, 
-    #              model = list(alpha_constant = TRUE, 
-    #                           beta = TRUE, 
-    #                           phi = TRUE), 
-    #              model_param = list(gamma_lx1 = sim_uni_gamma_lx1, 
-    #                                 sigma2_lx1 = sim_uni_sigma2_lx1,
-    #                                 sigma2_ux = sim_uni_sigma2_ux,
-    #                                 alpha_g2 = sim_uni_alpha_g2,
-    #                                 beta_x = sim_uni_beta,
-    #                                 sigma2_g2 = sim_uni_sigma2_g2,
-    #                                 sigma_g2lx1 = sim_uni_sigma_g2lx1,
-    #                                 phi_x = sim_uni_phi),
-    #              sample.nobs = input$sim_uni_samplesize,
-    #              na_pct = input$sim_uni_na_x_pct / 100)
   })
+  
+  # Downloadable csv of selected dataset ----
+  output$download_bi_data <- downloadHandler(
+    filename = function() {
+      paste("bi_lcsm_sim_data", ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(simulate_bi_lcsm(), file, row.names = FALSE)
+    }
+  )
   
   # Create data table
   output$datatable_sim_bi_lcsm <- DT::renderDataTable(
@@ -675,10 +702,7 @@ server <-  function(input, output) {
     
   })
   
-  
-  
 
-  
 }
 
 shinyApp(ui = ui, server = server)
