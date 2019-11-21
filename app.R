@@ -11,9 +11,7 @@ ui <-  tagList(
                
       # Overview ----
       tabPanel("Overview",
-               "What can this shinyapp do?
-               Add links to GitHub and stuff.
-               Add references here too at the bottom."),
+               includeMarkdown("INCLUDEME.md")),
 
       # Simulate univariate LCSM ----
       navbarMenu("Simulate Data", 
@@ -41,7 +39,7 @@ ui <-  tagList(
                                  )
                                  ),
                         tabPanel("Help",
-                                 "Explain parameters here!")
+                                 includeMarkdown("INCLUDEME_UNI.md"))
 
           )),
           column(width = 8, h4("Results:"),
@@ -114,7 +112,15 @@ ui <-  tagList(
 
         ),
         tabPanel("Help",
-                 "Explain parameters here!")
+                 tabsetPanel(
+                   tabPanel("Construct X",
+                            includeMarkdown("INCLUDEME_BI_X.md")),
+                   tabPanel("Construct Y",
+                            includeMarkdown("INCLUDEME_BI_Y.md")),
+                   tabPanel("Coupling",
+                            includeMarkdown("INCLUDEME_BI_C.md"))
+                   )
+                 )
         )),
         column(width = 8, h4("Results:"),
                tabsetPanel(
@@ -262,7 +268,6 @@ ui <-  tagList(
 
 # server ----
 server <-  function(input, output) {
-  
   
   # Specify univariate syntax ----
   output$lavaan_uni_lcsm <- renderText({
