@@ -5,19 +5,7 @@ The main aim of this application is to show how different univariate and bivaria
 [2012](http://www.jstatsoft.org/v48/i02/)).
 This application also provides data simulation tools to explore the effect of different parameters. 
 
-For details about this methods see for example 
-McArdle ([2009](http://www.annualreviews.org/doi/10.1146/annurev.psych.60.110707.163612)),
-Grimm et al. ([2012](https://doi.org/10.1080/10705511.2012.659627)).
-Related work illustrating how to implement different latent change score models in R have been described for example by
-Ghisletta & McArdle ([2012](https://doi.org/10.1080/10705511.2012.713275)), 
-Grimm, Ram & Estabrook ([2017](https://www.guilford.com/books/Growth-Modeling/Grimm-Ram-Estabrook/9781462526062)), and
-Kievit et al., ([2018](https://doi.org/10.1016/j.dcn.2017.11.007)).
-
-Online tutorials from the [Quantitative Developmental Systems Methodology Core](https://quantdev.ssri.psu.edu/) by Xiao Yang and Miriam Brinberg show examples how to specify lavaan code for [univariate](https://quantdev.ssri.psu.edu/tutorials/growth-modeling-chapter-16-introduction-latent-change-score-modeling) and [bivariate](https://quantdev.ssri.psu.edu/tutorials/growth-modeling-chapter-17-multivariate-latent-change-score-models) latent change score models described in Grimm, Ram & Estabrook ([2017](https://www.guilford.com/books/Growth-Modeling/Grimm-Ram-Estabrook/9781462526062)).
-
-
-
-### Installation of the R package `lcsm`
+### Installation of the R package lcsm
 
 You can install the development version from
 [GitHub](https://github.com/milanwiedemann/lcsm) with:
@@ -26,3 +14,14 @@ You can install the development version from
 # install.packages("devtools")
 devtools::install_github("milanwiedemann/lcsm")
 ```
+
+### Related work
+
+For details about this methods see for example 
+McArdle ([2009](http://www.annualreviews.org/doi/10.1146/annurev.psych.60.110707.163612)),
+Grimm et al. ([2012](https://doi.org/10.1080/10705511.2012.659627)).
+Examples illustrating how to implement different latent change score models in R can be found for example in:
+Ghisletta & McArdle ([2012](https://doi.org/10.1080/10705511.2012.713275)), 
+Grimm, Ram & Estabrook ([2017](https://www.guilford.com/books/Growth-Modeling/Grimm-Ram-Estabrook/9781462526062)), and
+Kievit et al., ([2018](https://doi.org/10.1016/j.dcn.2017.11.007)).
+Online tutorials from the [Quantitative Developmental Systems Methodology Core](https://quantdev.ssri.psu.edu/) by [Xiao Yang](https://quantdev.ssri.psu.edu/people/xfy5031) and [Miriam Brinberg](https://quantdev.ssri.psu.edu/people/mjb6504) show examples how to specify lavaan code for [univariate](https://quantdev.ssri.psu.edu/tutorials/growth-modeling-chapter-16-introduction-latent-change-score-modeling) and [bivariate](https://quantdev.ssri.psu.edu/tutorials/growth-modeling-chapter-17-multivariate-latent-change-score-models) latent change score models described in Grimm, Ram & Estabrook ([2017](https://www.guilford.com/books/Growth-Modeling/Grimm-Ram-Estabrook/9781462526062)).
