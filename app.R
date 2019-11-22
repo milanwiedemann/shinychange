@@ -16,9 +16,10 @@ ui <- tagList(navbarPage(
     includeMarkdown("INCLUDEME.md")
   ),
 
-  # Simulate univariate LCSM ----
+  # Simulate Data ----
   navbarMenu(
     "Simulate Data",
+    # Simulate Univariate ----
     tabPanel(
       "Univariate LCSM",
       column(
@@ -28,7 +29,7 @@ ui <- tagList(navbarPage(
           tabPanel(
             "Data Characteristics",
             wellPanel(
-              numericInput("sim_uni_timepoints", "Measurement Points:", value = 10),
+              numericInput("sim_uni_timepoints", "Measurement Points:", value = 8),
               numericInput("sim_uni_samplesize", "Sample Size:", value = 500),
               sliderInput(
                 "sim_uni_na_x_pct",
@@ -38,51 +39,59 @@ ui <- tagList(navbarPage(
                 value = 0,
                 step = 1
               ),
+              # Maybe have a Simulate Data button at some point?
               # actionButton("simulate_action", "Simulate Data", class = "btn-primary")
             )
           ),
+          # Enter Parameters ----
           tabPanel(
             "Parameters",
             wellPanel(
-              helpText("Note: See 'Help' for further information about the parameters."),
+              helpText("Note: See 'Help' for further information about the parameters. 
+                       Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 16."),
               numericInput(
                 "sim_uni_gamma_lx1",
                 "gamma_lx1",
-                value = 0,
+                value = 32.53,
                 step = .1
               ),
               numericInput(
                 "sim_uni_sigma2_lx1",
                 "sigma2_lx1",
-                value = .5,
+                value = 71.9,
                 step = .1
               ),
               numericInput(
                 "sim_uni_sigma2_ux",
                 "sigma2_ux",
-                value = .2,
+                value = 30.82,
                 step = .1
               ),
-              numericInput("sim_uni_beta", "beta", value = -.1, step = .1),
+              numericInput(
+                "sim_uni_beta_x", 
+                "beta", 
+                value = -0.24, 
+                step = .1
+                ),
               numericInput(
                 "sim_uni_alpha_g2",
                 "alpha_g2",
-                value = -.4,
+                value = 15.22,
                 step = .1
               ),
               numericInput(
                 "sim_uni_sigma2_g2",
                 "sigma2_g2",
-                value = .4,
+                value = 5.6,
                 step = .1
               ),
               numericInput(
                 "sim_uni_sigma_g2lx1",
                 "sigma_g2lx1",
-                value = .2,
+                value = 13.75,
                 step = .1
               ),
-              numericInput("sim_uni_phi", "phi", value = NA, step = .1)
+              numericInput("sim_uni_phi_x", "phi", value = NA, step = .1)
             )
           ),
           tabPanel(
@@ -109,13 +118,14 @@ ui <- tagList(navbarPage(
             helpText("Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."),
             verbatimTextOutput("lavaan_sim_uni_lcsm")
           )
+          # Maybe include tab with simplified Path Diagram?
           # tabPanel("Path diagram",
           #          "Not working yet.")
         )
       )
     ),
 
-    # Simulate bivariate LCSM ----
+    # Simulate Bivariate ----
     tabPanel(
       "Bivariate LCSM",
       column(
@@ -148,16 +158,19 @@ ui <- tagList(navbarPage(
                 value = 0,
                 step = 1
               ),
+              # Maybe have a Simulate Data button at some point?
               # actionButton("simulate_action", "Simulate data", class = "btn-primary")
             )
           ),
+          # Enter Parameters ----
           tabPanel(
             "Parameters",
             tabsetPanel(
               tabPanel(
                 "Construct X",
                 wellPanel(
-                  helpText("Note: See 'Help' for further information about the parameters."),
+                  helpText("Note: See 'Help' for further information about the parameters. 
+                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."),
                   numericInput(
                     "sim_bi_gamma_lx1",
                     "gamma_lx1",
@@ -351,6 +364,7 @@ ui <- tagList(navbarPage(
             helpText("Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."),
             verbatimTextOutput("lavaan_sim_bi_lcsm")
           )
+          # Maybe include tab with simplified Path Diagram?
           # tabPanel("Path diagram",
           #          "Not working yet.")
         )
@@ -625,6 +639,7 @@ ui <- tagList(navbarPage(
 
 # server ----
 server <- function(input, output) {
+  
   # Specify univariate syntax ----
   output$lavaan_uni_lcsm <- renderText({
     specify_uni_param <- input$specify_uni_param
@@ -789,28 +804,49 @@ server <- function(input, output) {
     sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
     sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
     sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
-    sim_uni_beta <- input$sim_uni_beta
+    sim_uni_beta_x <- input$sim_uni_beta_x
     sim_uni_alpha_g2 <- input$sim_uni_alpha_g2
     sim_uni_sigma2_g2 <- input$sim_uni_sigma2_g2
     sim_uni_sigma_g2lx1 <- input$sim_uni_sigma_g2lx1
-    sim_uni_phi <- input$sim_uni_phi
+    sim_uni_phi_x <- input$sim_uni_phi_x
+    
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_uni_alpha_g2) == TRUE | base::is.na(sim_uni_sigma2_g2) == TRUE | base::is.na(sim_uni_sigma_g2lx1) == TRUE){
+      sim_uni_model_alpha_constant_x <- FALSE
+    } else {
+      sim_uni_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_uni_beta_x) == TRUE){
+      sim_uni_model_beta_x <- FALSE
+    } else {
+      sim_uni_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_uni_phi_x) == TRUE){
+      sim_uni_model_phi_x <- FALSE
+    } else {
+      sim_uni_model_phi_x <- TRUE
+    }
 
     sim_uni_lcsm(
       timepoints = input$sim_uni_timepoints,
       model = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = TRUE
+        alpha_constant = sim_uni_model_alpha_constant_x,
+        beta = sim_uni_model_beta_x,
+        phi = sim_uni_model_phi_x
       ),
       model_param = list(
         gamma_lx1 = sim_uni_gamma_lx1,
         sigma2_lx1 = sim_uni_sigma2_lx1,
         sigma2_ux = sim_uni_sigma2_ux,
         alpha_g2 = sim_uni_alpha_g2,
-        beta_x = sim_uni_beta,
+        beta_x = sim_uni_beta_x,
         sigma2_g2 = sim_uni_sigma2_g2,
         sigma_g2lx1 = sim_uni_sigma_g2lx1,
-        phi_x = sim_uni_phi
+        phi_x = sim_uni_phi_x
       ),
       sample.nobs = input$sim_uni_samplesize,
       na_pct = input$sim_uni_na_x_pct / 100
@@ -836,17 +872,39 @@ server <- function(input, output) {
       )
   )
 
-  # lavaan syntax
+  # simulate data syntax ----
+  # univariate ----
   output$lavaan_sim_uni_lcsm <- renderText({
     # extract input variables
     sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
     sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
     sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
-    sim_uni_beta <- input$sim_uni_beta
+    sim_uni_beta_x <- input$sim_uni_beta_x
     sim_uni_alpha_g2 <- input$sim_uni_alpha_g2
     sim_uni_sigma2_g2 <- input$sim_uni_sigma2_g2
     sim_uni_sigma_g2lx1 <- input$sim_uni_sigma_g2lx1
-    sim_uni_phi <- input$sim_uni_phi
+    sim_uni_phi_x <- input$sim_uni_phi_x
+    
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_uni_alpha_g2) == TRUE | base::is.na(sim_uni_sigma2_g2) == TRUE | base::is.na(sim_uni_sigma_g2lx1) == TRUE){
+      sim_uni_model_alpha_constant_x <- FALSE
+    } else {
+      sim_uni_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_uni_beta_x) == TRUE){
+      sim_uni_model_beta_x <- FALSE
+    } else {
+      sim_uni_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_uni_phi_x) == TRUE){
+      sim_uni_model_phi_x <- FALSE
+    } else {
+      sim_uni_model_phi_x <- TRUE
+    }
 
     # create lavaan syntax
     sim_uni_lcsm(
@@ -854,19 +912,19 @@ server <- function(input, output) {
       return_lavaan_syntax = TRUE,
       return_lavaan_syntax_string = TRUE,
       model = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = TRUE
+        alpha_constant = sim_uni_model_alpha_constant_x,
+        beta = sim_uni_model_beta_x,
+        phi = sim_uni_model_phi_x
       ),
       model_param = list(
         gamma_lx1 = sim_uni_gamma_lx1,
         sigma2_lx1 = sim_uni_sigma2_lx1,
         sigma2_ux = sim_uni_sigma2_ux,
         alpha_g2 = sim_uni_alpha_g2,
-        beta_x = sim_uni_beta,
+        beta_x = sim_uni_beta_x,
         sigma2_g2 = sim_uni_sigma2_g2,
         sigma_g2lx1 = sim_uni_sigma_g2lx1,
-        phi_x = sim_uni_phi
+        phi_x = sim_uni_phi_x
       ),
       sample.nobs = input$sim_uni_samplesize,
       na_pct = input$sim_uni_na_x_pct / 100
@@ -950,7 +1008,7 @@ server <- function(input, output) {
         gamma_ly1 = sim_bi_gamma_ly1,
         sigma2_ly1 = sim_bi_sigma2_ly1,
         sigma2_uy = sim_bi_sigma2_uy,
-        alpha_j2 = -sim_bi_alpha_j2,
+        alpha_j2 = sim_bi_alpha_j2,
         sigma2_j2 = sim_bi_sigma2_j2,
         sigma_j2ly1 = sim_bi_sigma_j2ly1,
         beta_y = sim_bi_beta_y,
@@ -1044,9 +1102,9 @@ server <- function(input, output) {
         gamma_lx1 = sim_bi_gamma_lx1,
         sigma2_lx1 = sim_bi_sigma2_lx1,
         sigma2_ux = sim_bi_sigma2_ux,
-        alpha_g2 = sim_bi_alpha_g2,
-        sigma2_g2 = sim_bi_sigma2_g2,
-        sigma_g2lx1 = sim_bi_sigma_g2lx1,
+        alpha_j2 = sim_bi_alpha_g2,
+        sigma2_j2 = sim_bi_sigma2_g2,
+        sigma_j2lx1 = sim_bi_sigma_g2lx1,
         beta_x = sim_bi_beta_x,
         phi_x = sim_bi_phi_x
       ),
@@ -1059,7 +1117,7 @@ server <- function(input, output) {
         gamma_ly1 = sim_bi_gamma_ly1,
         sigma2_ly1 = sim_bi_sigma2_ly1,
         sigma2_uy = sim_bi_sigma2_uy,
-        alpha_j2 = -sim_bi_alpha_j2,
+        alpha_j2 = sim_bi_alpha_j2,
         sigma2_j2 = sim_bi_sigma2_j2,
         sigma_j2ly1 = sim_bi_sigma_j2ly1,
         beta_y = sim_bi_beta_y,
@@ -1077,6 +1135,7 @@ server <- function(input, output) {
         sigma_g2ly1 = sim_bi_sigma_g2ly1,
         sigma_j2lx1 = sim_bi_sigma_j2lx1,
         sigma_j2g2 = sim_bi_sigma_j2g2,
+        
         delta_lag_xy = sim_bi_delta_lag_xy,
         delta_lag_yx = sim_bi_delta_lag_yx,
         xi_lag_xy = sim_bi_xi_lag_xy,
