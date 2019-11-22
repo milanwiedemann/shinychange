@@ -443,16 +443,11 @@ ui <- tagList(navbarPage(
             "specify_uni_param",
             label = "Construct X",
             choices = list(
-              "alpha_constant" = "alpha_constant",
-              "beta" = "beta",
-              "phi" = "phi"
+              "Constant change factor [alpha_g]" = "alpha_constant",
+              "Proportional change factor [beta_x]" = "beta",
+              "Autoregression of change scores [phi_x]" = "phi"
             ),
             selected = c("alpha_constant", "beta", "phi")
-          ),
-          helpText(
-            "Note: alpha_constant (Constant change factor);
-                     beta (Proportional change factor);
-                     phi (Autoregression of change scores)."
           )
       )))),
       column(
@@ -510,16 +505,11 @@ ui <- tagList(navbarPage(
                          "specify_bi_param_x",
                          label = "Construct X:",
                          choices = list(
-                           "alpha_constant_x" = "alpha_constant_x",
-                           "beta_x" = "beta_x",
-                           "phi_x" = "phi_x"
+                           "Constant change factor [alpha_g]" = "alpha_constant_x",
+                           "Proportional change factor [beta_x]" = "beta_x",
+                           "Autoregression of change scores [phi_x]" = "phi_x"
                          ),
                          selected = c("alpha_constant_x", "beta_x", "phi_x")
-                       ),
-                       helpText(
-                         "Note: alpha_constant_x (Constant change factor);
-                         beta_x (Proportional change factor);
-                         phi_x (Autoregression of change scores)."
                        )
                      ),
                      wellPanel(
@@ -527,16 +517,11 @@ ui <- tagList(navbarPage(
                          "specify_bi_param_y",
                          label = "Construct Y:",
                          choices = list(
-                           "alpha_constant_y" = "alpha_constant_y",
-                           "beta_y" = "beta_y",
-                           "phi_y" = "phi_y"
+                           "Constant change factor [alpha_j]" = "alpha_constant_y",
+                           "Proportional change factor [beta_y]" = "beta_y",
+                           "Autoregression of change scores [phi_y]" = "phi_y"
                          ),
                          selected = c("alpha_constant_y", "beta_y", "phi_y")
-                       ),
-                       helpText(
-                         "Note: alpha_constant_y (Constant change factor);
-                         beta_y (Proportional change factor);
-                         phi_y (Autoregression of change scores)."
                        )
                      ),
                      wellPanel(
@@ -544,25 +529,15 @@ ui <- tagList(navbarPage(
                          "specify_bi_param_coupling",
                          label = "Coupling:",
                          choices = list(
-                           "delta_con_xy" = "delta_con_xy",
-                           "delta_con_yx" = "delta_con_yx",
-                           "delta_lag_xy" = "delta_lag_xy",
-                           "delta_lag_yx" = "delta_lag_yx",
-                           "xi_con_xy" = "xi_con_xy",
-                           "xi_con_yx" = "xi_con_yx",
-                           "xi_lag_xy" = "xi_lag_xy",
-                           "xi_lag_yx" = "xi_lag_yx"
+                           "Change score x (t) determined by true score y (t) [delta_con_xy]" = "delta_con_xy",
+                           "Change score y (t) determined by true score x (t)  [delta_con_yx]" = "delta_con_yx",
+                           "Change score x (t) determined by true score y (t-1) [delta_lag_xy]" = "delta_lag_xy",
+                           "Change score y (t) determined by true score x (t-1) [delta_lag_yx]" = "delta_lag_yx",
+                           "Change score x (t) determined by change score y (t) [xi_con_xy]" = "xi_con_xy",
+                           "Change score y (t) determined by change score x (t) [xi_con_yx]" = "xi_con_yx",
+                           "Change score x (t) determined by change score y (t-1) [xi_lag_xy]" = "xi_lag_xy",
+                           "Change score y (t) determined by change score x (t-1) [xi_lag_yx]" = "xi_lag_yx"
                          )
-                       ),
-                       helpText(
-                         "Note: delta_con_xy (True score y predicting concurrent change score x);
-                                                       delta_con_yx (True score x predicting concurrent change score y);
-                                                       delta_lag_xy (True score y predicting subsequent change score x);
-                                                       delta_lag_yx (True score x predicting subsequent change score y);
-                                                       xi_con_xy (Change score y predicting concurrent change score x);
-                                                       xi_con_yx (Change score x predicting concurrent change score y);
-                                                       xi_lag_xy (Change score y predicting subsequent change score x);
-                                                       xi_lag_yx (Change score x predicting subsequent change score y)."
                        )
                      )
                    ))),
