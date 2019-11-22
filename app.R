@@ -980,15 +980,88 @@ server <- function(input, output) {
     sim_bi_delta_lag_yx <- input$sim_bi_delta_lag_yx
     sim_bi_xi_lag_xy <- input$sim_bi_xi_lag_xy
     sim_bi_xi_lag_yx <- input$sim_bi_xi_lag_yx
-
+    
+    # Construct X
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_g2) == TRUE | base::is.na(sim_bi_sigma2_g2) == TRUE | base::is.na(sim_bi_sigma_g2lx1) == TRUE){
+      sim_bi_model_alpha_constant_x <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_x) == TRUE){
+      sim_bi_model_beta_x <- FALSE
+    } else {
+      sim_bi_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_x) == TRUE){
+      sim_bi_model_phi_x <- FALSE
+    } else {
+      sim_bi_model_phi_x <- TRUE
+    }
+    
+    # Construct y
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_j2) == TRUE | base::is.na(sim_bi_sigma2_j2) == TRUE | base::is.na(sim_bi_sigma_j2ly1) == TRUE){
+      sim_bi_model_alpha_constant_y <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_y <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_y) == TRUE){
+      sim_bi_model_beta_y <- FALSE
+    } else {
+      sim_bi_model_beta_y <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_y) == TRUE){
+      sim_bi_model_phi_y <- FALSE
+    } else {
+      sim_bi_model_phi_y <- TRUE
+    }
+    
+    # Coupling
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_xy) == TRUE){
+      sim_bi_model_delta_lag_xy <- FALSE
+    } else {
+      sim_bi_model_delta_lag_xy <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_yx) == TRUE){
+      sim_bi_model_delta_lag_yx <- FALSE
+    } else {
+      sim_bi_model_delta_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_yx) == TRUE){
+      sim_bi_model_xi_lag_yx <- FALSE
+    } else {
+      sim_bi_model_xi_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_xy) == TRUE){
+      sim_bi_model_xi_lag_xy <- FALSE
+    } else {
+      sim_bi_model_xi_lag_xy <- TRUE
+    }
+    
     sim_bi_lcsm(
       timepoints = input$sim_bi_timepoints,
       na_x_pct = input$sim_bi_na_x_pct / 100,
       na_y_pct = input$sim_bi_na_y_pct / 100,
       model_x = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = FALSE
+        alpha_constant = sim_bi_model_alpha_constant_x,
+        beta = sim_bi_model_beta_x,
+        phi = sim_bi_model_phi_x
       ),
       model_x_param = list(
         gamma_lx1 = sim_bi_gamma_lx1,
@@ -1001,9 +1074,9 @@ server <- function(input, output) {
         phi_x = sim_bi_phi_x
       ),
       model_y = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = TRUE
+        alpha_constant = sim_bi_model_alpha_constant_y,
+        beta = sim_bi_model_beta_y,
+        phi = sim_bi_model_phi_y
       ),
       model_y_param = list(
         gamma_ly1 = sim_bi_gamma_ly1,
@@ -1016,10 +1089,10 @@ server <- function(input, output) {
         phi_y = sim_bi_phi_y
       ),
       coupling = list(
-        delta_lag_xy = TRUE,
-        delta_lag_yx = TRUE,
-        xi_lag_yx = TRUE,
-        xi_lag_xy = TRUE
+        delta_lag_xy = sim_bi_model_delta_lag_xy,
+        delta_lag_yx = sim_bi_model_delta_lag_yx,
+        xi_lag_yx = sim_bi_model_xi_lag_yx,
+        xi_lag_xy = sim_bi_model_xi_lag_xy
       ),
       coupling_param = list(
         sigma_su = sim_bi_sigma_su,
@@ -1086,6 +1159,79 @@ server <- function(input, output) {
     sim_bi_delta_lag_yx <- input$sim_bi_delta_lag_yx
     sim_bi_xi_lag_xy <- input$sim_bi_xi_lag_xy
     sim_bi_xi_lag_yx <- input$sim_bi_xi_lag_yx
+    
+    # Construct X
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_g2) == TRUE | base::is.na(sim_bi_sigma2_g2) == TRUE | base::is.na(sim_bi_sigma_g2lx1) == TRUE){
+      sim_bi_model_alpha_constant_x <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_x) == TRUE){
+      sim_bi_model_beta_x <- FALSE
+    } else {
+      sim_bi_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_x) == TRUE){
+      sim_bi_model_phi_x <- FALSE
+    } else {
+      sim_bi_model_phi_x <- TRUE
+    }
+    
+    # Construct y
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_j2) == TRUE | base::is.na(sim_bi_sigma2_j2) == TRUE | base::is.na(sim_bi_sigma_j2ly1) == TRUE){
+      sim_bi_model_alpha_constant_y <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_y <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_y) == TRUE){
+      sim_bi_model_beta_y <- FALSE
+    } else {
+      sim_bi_model_beta_y <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_y) == TRUE){
+      sim_bi_model_phi_y <- FALSE
+    } else {
+      sim_bi_model_phi_y <- TRUE
+    }
+    
+    # Coupling
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_xy) == TRUE){
+      sim_bi_model_delta_lag_xy <- FALSE
+    } else {
+      sim_bi_model_delta_lag_xy <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_yx) == TRUE){
+      sim_bi_model_delta_lag_yx <- FALSE
+    } else {
+      sim_bi_model_delta_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_yx) == TRUE){
+      sim_bi_model_xi_lag_yx <- FALSE
+    } else {
+      sim_bi_model_xi_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_xy) == TRUE){
+      sim_bi_model_xi_lag_xy <- FALSE
+    } else {
+      sim_bi_model_xi_lag_xy <- TRUE
+    }
 
     # create lavaan syntax
     sim_bi_lcsm(
@@ -1095,24 +1241,24 @@ server <- function(input, output) {
       na_x_pct = input$sim_bi_na_x_pct / 100,
       na_y_pct = input$sim_bi_na_y_pct / 100,
       model_x = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = FALSE
+        alpha_constant = sim_bi_model_alpha_constant_x,
+        beta = sim_bi_model_beta_x,
+        phi = sim_bi_model_phi_x
       ),
       model_x_param = list(
         gamma_lx1 = sim_bi_gamma_lx1,
         sigma2_lx1 = sim_bi_sigma2_lx1,
         sigma2_ux = sim_bi_sigma2_ux,
-        alpha_j2 = sim_bi_alpha_g2,
-        sigma2_j2 = sim_bi_sigma2_g2,
-        sigma_j2lx1 = sim_bi_sigma_g2lx1,
+        alpha_g2 = sim_bi_alpha_g2,
+        sigma2_g2 = sim_bi_sigma2_g2,
+        sigma_g2lx1 = sim_bi_sigma_g2lx1,
         beta_x = sim_bi_beta_x,
         phi_x = sim_bi_phi_x
       ),
       model_y = list(
-        alpha_constant = TRUE,
-        beta = TRUE,
-        phi = TRUE
+        alpha_constant = sim_bi_model_alpha_constant_y,
+        beta = sim_bi_model_beta_y,
+        phi = sim_bi_model_phi_y
       ),
       model_y_param = list(
         gamma_ly1 = sim_bi_gamma_ly1,
@@ -1125,10 +1271,10 @@ server <- function(input, output) {
         phi_y = sim_bi_phi_y
       ),
       coupling = list(
-        delta_lag_xy = TRUE,
-        delta_lag_yx = TRUE,
-        xi_lag_yx = TRUE,
-        xi_lag_xy = TRUE
+        delta_lag_xy = sim_bi_model_delta_lag_xy,
+        delta_lag_yx = sim_bi_model_delta_lag_yx,
+        xi_lag_yx = sim_bi_model_xi_lag_yx,
+        xi_lag_xy = sim_bi_model_xi_lag_xy
       ),
       coupling_param = list(
         sigma_su = sim_bi_sigma_su,
