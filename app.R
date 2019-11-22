@@ -898,8 +898,10 @@ server <- function(input, output) {
   })
   
   
-  # Path diagram
+  # Path diagram ----
   output$plot_sim_uni_lcsm_path <- renderPlot({
+    
+    withProgress(message = 'Making plot', value = 0, {
     
     # extract input variables
     sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
@@ -932,12 +934,15 @@ server <- function(input, output) {
       sim_uni_model_phi_x <- TRUE
     }
     
+    incProgress(1/6)
+    
     uni_lavaan_results <- fit_uni_lcsm(data = simulate_uni_lcsm(), 
                                        var = names(simulate_uni_lcsm())[-1],
                                        model = list(alpha_constant = sim_uni_model_alpha_constant_x, 
                                                     beta = sim_uni_model_beta_x, 
                                                     phi = sim_uni_model_phi_x))
     
+    incProgress(2/3)
     
     uni_lavaan_syntax <- fit_uni_lcsm(data = simulate_uni_lcsm(), 
                                       var = names(simulate_uni_lcsm())[-1],
@@ -946,6 +951,10 @@ server <- function(input, output) {
                                                    phi = sim_uni_model_phi_x),
                                       return_lavaan_syntax = TRUE, 
                                       return_lavaan_syntax_string = TRUE)
+    
+    incProgress(3/3)
+    
+    })
 
     plot_lcsm(lavaan_object = uni_lavaan_results, 
               lavaan_syntax = uni_lavaan_syntax,
@@ -1341,8 +1350,10 @@ server <- function(input, output) {
   })
   
   
-  # Path diagram
+  # Path diagram ----
   output$plot_sim_bi_lcsm_path <- renderPlot({
+    
+    withProgress(message = 'Making plot', value = 0, {
     
     # extract input variables
     sim_bi_gamma_lx1 <- input$sim_bi_gamma_lx1
@@ -1447,6 +1458,8 @@ server <- function(input, output) {
       sim_bi_model_xi_lag_xy <- TRUE
     }
 
+    incProgress(1/6)
+
     # Fit bivariate lcsm and save the results 
     bi_lavaan_results <- fit_bi_lcsm(data = simulate_bi_lcsm(), 
                                      var_x = names(simulate_bi_lcsm())[2:(input$sim_bi_timepoints + 1)],
@@ -1467,6 +1480,8 @@ server <- function(input, output) {
                                        xi_lag_xy = sim_bi_model_xi_lag_xy
                                      )
                                      )
+    
+    incProgress(2/3)
     
     # Save the lavaan syntax that was used to create the layout matrix for semPlot
     bi_lavaan_syntax <- fit_bi_lcsm(data = simulate_bi_lcsm(), 
@@ -1489,6 +1504,10 @@ server <- function(input, output) {
                                     ),
                                     return_lavaan_syntax = TRUE, 
                                     return_lavaan_syntax_string = TRUE)
+    
+    incProgress(3/3)
+    
+    })
     
     
     
