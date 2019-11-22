@@ -5,6 +5,11 @@ The main aim of this application is to show how different univariate and bivaria
 [2012](http://www.jstatsoft.org/v48/i02/)).
 This application also provides data simulation tools to explore the effect of different parameters. 
 
+I started working on this project to better understand how latent change score modeling works and to how to use R efficiently to run different models.
+This is still work in progress and feedback is very welcome. 
+The code of the R package [lcsm](https://github.com/milanwiedemann/lcsm) and this shiny application [shinychange](https://github.com/milanwiedemann/shinychange) can be found on GitHub.
+Feel free to contact me on [Twitter](https://twitter.com/milanwiedemann) or sent me an [email](mailto:milan.wiedemann@gmail.com).
+
 ### Installation of the R package lcsm
 
 You can install the development version from
