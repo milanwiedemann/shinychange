@@ -580,7 +580,7 @@ ui <- tagList(navbarPage(
         ),
         # Maybe include tab with simplified Path Diagram?
         tabPanel("Path Diagram",
-                 "Not working yet.")
+                 plotOutput("plot_specify_bi_lcsm_path", width = 900, height = 550))
       )
     )
   )
@@ -1033,7 +1033,8 @@ server <- function(input, output) {
         sim_uni_model_phi_x <- TRUE
       }
       
-      simulate_uni_lcsm <- sim_uni_lcsm(
+      # Simulate data here for plot using same parameters as specified in simulate tab
+      simulate_uni_lcsm_path <- sim_uni_lcsm(
         var = input$specify_uni_var_name,
         sample.nobs = 100,
         timepoints = input$specify_uni_timepoints,
@@ -1054,16 +1055,16 @@ server <- function(input, output) {
         )
         )
       
-      uni_lavaan_results <- fit_uni_lcsm(data = simulate_uni_lcsm, 
-                                         var = names(simulate_uni_lcsm)[-1],
+      uni_lavaan_results <- fit_uni_lcsm(data = simulate_uni_lcsm_path, 
+                                         var = names(simulate_uni_lcsm_path)[-1],
                                          model = list(alpha_constant = alpha_constant, 
                                                       beta = beta, 
                                                       phi = phi))
       
       incProgress(2/3)
       
-      uni_lavaan_syntax <- fit_uni_lcsm(data = simulate_uni_lcsm, 
-                                        var = names(simulate_uni_lcsm)[-1],
+      uni_lavaan_syntax <- fit_uni_lcsm(data = simulate_uni_lcsm_path, 
+                                        var = names(simulate_uni_lcsm_path)[-1],
                                         model = list(alpha_constant = alpha_constant, 
                                                      beta = beta, 
                                                      phi = phi),
@@ -1080,39 +1081,6 @@ server <- function(input, output) {
               whatLabels = "label",
               what = "eq")
   })
-  
-#   specify_uni_param <- input$specify_uni_param
-#   # alpha_constant
-#   if ("alpha_constant" %in% specify_uni_param) {
-#     alpha_constant <- TRUE
-#   } else {
-#     alpha_constant <- FALSE
-#   }
-#   # beta
-#   if ("beta" %in% specify_uni_param) {
-#     beta <- TRUE
-#   } else {
-#     beta <- FALSE
-#   }
-#   # phi
-#   if ("phi" %in% specify_uni_param) {
-#     phi <- TRUE
-#   } else {
-#     phi <- FALSE
-#   }
-#   
-#   # Create lavaan syntax
-#   specify_uni_lcsm(
-#     timepoints = input$specify_uni_timepoints,
-#     model = list(
-#       alpha_constant = alpha_constant,
-#       beta = beta,
-#       phi = phi
-#     ),
-#     var = input$specify_uni_var_name,
-#     change_letter = "g"
-#   )
-# })
 
   # Bivariate ----
   # Reactive environment to simulate data
@@ -1669,6 +1637,330 @@ server <- function(input, output) {
               what = "eq")
   })
   
+  
+  
+  
+  # Path diagram ----
+  output$plot_specify_bi_lcsm_path <- renderPlot({
+    
+    withProgress(message = 'Making plot', value = 0, {
+      
+      # extract input variables
+      sim_bi_gamma_lx1 <- input$sim_bi_gamma_lx1
+      sim_bi_sigma2_lx1 <- input$sim_bi_sigma2_lx1
+      sim_bi_sigma2_ux <- input$sim_bi_sigma2_ux
+      sim_bi_beta_x <- input$sim_bi_beta_x
+      sim_bi_alpha_g2 <- input$sim_bi_alpha_g2
+      sim_bi_sigma2_g2 <- input$sim_bi_sigma2_g2
+      sim_bi_sigma_g2lx1 <- input$sim_bi_sigma_g2lx1
+      sim_bi_phi_x <- input$sim_bi_phi_x
+      
+      sim_bi_gamma_ly1 <- input$sim_bi_gamma_ly1
+      sim_bi_sigma2_ly1 <- input$sim_bi_sigma2_ly1
+      sim_bi_sigma2_uy <- input$sim_bi_sigma2_uy
+      sim_bi_beta_y <- input$sim_bi_beta_y
+      sim_bi_alpha_j2 <- input$sim_bi_alpha_j2
+      sim_bi_sigma2_j2 <- input$sim_bi_sigma2_j2
+      sim_bi_sigma_j2ly1 <- input$sim_bi_sigma_j2ly1
+      sim_bi_phi_y <- input$sim_bi_phi_y
+      
+      sim_bi_sigma_su <- input$sim_bi_sigma_su
+      sim_bi_sigma_ly1lx1 <- input$sim_bi_sigma_ly1lx1
+      sim_bi_sigma_g2ly1 <- input$sim_bi_sigma_g2ly1
+      sim_bi_sigma_j2lx1 <- input$sim_bi_sigma_j2lx1
+      sim_bi_sigma_j2g2 <- input$sim_bi_sigma_j2g2
+      
+      sim_bi_delta_lag_xy <- input$sim_bi_delta_lag_xy
+      sim_bi_delta_lag_yx <- input$sim_bi_delta_lag_yx
+      sim_bi_xi_lag_xy <- input$sim_bi_xi_lag_xy
+      sim_bi_xi_lag_yx <- input$sim_bi_xi_lag_yx
+      
+      # Construct X
+      # set constant change parameter for simulating data
+      if (base::is.na(sim_bi_alpha_g2) == TRUE | base::is.na(sim_bi_sigma2_g2) == TRUE | base::is.na(sim_bi_sigma_g2lx1) == TRUE){
+        sim_bi_model_alpha_constant_x <- FALSE
+      } else {
+        sim_bi_model_alpha_constant_x <- TRUE
+      }
+      
+      # set beta parameter for simulating data
+      if (base::is.na(sim_bi_beta_x) == TRUE){
+        sim_bi_model_beta_x <- FALSE
+      } else {
+        sim_bi_model_beta_x <- TRUE
+      }
+      
+      # set phi parameter for simulating data
+      if (base::is.na(sim_bi_phi_x) == TRUE){
+        sim_bi_model_phi_x <- FALSE
+      } else {
+        sim_bi_model_phi_x <- TRUE
+      }
+      
+      # Construct y
+      # set constant change parameter for simulating data
+      if (base::is.na(sim_bi_alpha_j2) == TRUE | base::is.na(sim_bi_sigma2_j2) == TRUE | base::is.na(sim_bi_sigma_j2ly1) == TRUE){
+        sim_bi_model_alpha_constant_y <- FALSE
+      } else {
+        sim_bi_model_alpha_constant_y <- TRUE
+      }
+      
+      # set beta parameter for simulating data
+      if (base::is.na(sim_bi_beta_y) == TRUE){
+        sim_bi_model_beta_y <- FALSE
+      } else {
+        sim_bi_model_beta_y <- TRUE
+      }
+      
+      # set phi parameter for simulating data
+      if (base::is.na(sim_bi_phi_y) == TRUE){
+        sim_bi_model_phi_y <- FALSE
+      } else {
+        sim_bi_model_phi_y <- TRUE
+      }
+      
+      # Coupling
+      # set constant change parameter for simulating data
+      if (base::is.na(sim_bi_delta_lag_xy) == TRUE){
+        sim_bi_model_delta_lag_xy <- FALSE
+      } else {
+        sim_bi_model_delta_lag_xy <- TRUE
+      }
+      
+      # set beta parameter for simulating data
+      if (base::is.na(sim_bi_delta_lag_yx) == TRUE){
+        sim_bi_model_delta_lag_yx <- FALSE
+      } else {
+        sim_bi_model_delta_lag_yx <- TRUE
+      }
+      
+      # set phi parameter for simulating data
+      if (base::is.na(sim_bi_xi_lag_yx) == TRUE){
+        sim_bi_model_xi_lag_yx <- FALSE
+      } else {
+        sim_bi_model_xi_lag_yx <- TRUE
+      }
+      
+      # set phi parameter for simulating data
+      if (base::is.na(sim_bi_xi_lag_xy) == TRUE){
+        sim_bi_model_xi_lag_xy <- FALSE
+      } else {
+        sim_bi_model_xi_lag_xy <- TRUE
+      }
+      
+      incProgress(1/6)
+      
+      # Simulate data here using the same parameters as in simulate bi tab
+      simulate_bi_lcsm_path <- sim_bi_lcsm(
+        timepoints = input$specify_bi_timepoints,
+        model_x = list(
+          alpha_constant = sim_bi_model_alpha_constant_x,
+          beta = sim_bi_model_beta_x,
+          phi = sim_bi_model_phi_x
+        ),
+        model_x_param = list(
+          gamma_lx1 = sim_bi_gamma_lx1,
+          sigma2_lx1 = sim_bi_sigma2_lx1,
+          sigma2_ux = sim_bi_sigma2_ux,
+          alpha_g2 = sim_bi_alpha_g2,
+          sigma2_g2 = sim_bi_sigma2_g2,
+          sigma_g2lx1 = sim_bi_sigma_g2lx1,
+          beta_x = sim_bi_beta_x,
+          phi_x = sim_bi_phi_x
+        ),
+        model_y = list(
+          alpha_constant = sim_bi_model_alpha_constant_y,
+          beta = sim_bi_model_beta_y,
+          phi = sim_bi_model_phi_y
+        ),
+        model_y_param = list(
+          gamma_ly1 = sim_bi_gamma_ly1,
+          sigma2_ly1 = sim_bi_sigma2_ly1,
+          sigma2_uy = sim_bi_sigma2_uy,
+          alpha_j2 = sim_bi_alpha_j2,
+          sigma2_j2 = sim_bi_sigma2_j2,
+          sigma_j2ly1 = sim_bi_sigma_j2ly1,
+          beta_y = sim_bi_beta_y,
+          phi_y = sim_bi_phi_y
+        ),
+        coupling = list(
+          delta_lag_xy = sim_bi_model_delta_lag_xy,
+          delta_lag_yx = sim_bi_model_delta_lag_yx,
+          xi_lag_yx = sim_bi_model_xi_lag_yx,
+          xi_lag_xy = sim_bi_model_xi_lag_xy
+        ),
+        coupling_param = list(
+          sigma_su = sim_bi_sigma_su,
+          sigma_ly1lx1 = sim_bi_sigma_ly1lx1,
+          sigma_g2ly1 = sim_bi_sigma_g2ly1,
+          sigma_j2lx1 = sim_bi_sigma_j2lx1,
+          sigma_j2g2 = sim_bi_sigma_j2g2,
+          
+          delta_lag_xy = sim_bi_delta_lag_xy,
+          delta_lag_yx = sim_bi_delta_lag_yx,
+          xi_lag_xy = sim_bi_xi_lag_xy,
+          xi_lag_yx = sim_bi_xi_lag_yx
+        ),
+        sample.nobs = input$sim_bi_samplesize
+      )
+      
+      specify_bi_param_x <- input$specify_bi_param_x
+      # alpha_constant_x
+      if ("alpha_constant_x" %in% specify_bi_param_x) {
+        alpha_constant_x <- TRUE
+      } else {
+        alpha_constant_x <- FALSE
+      }
+      # beta_x
+      if ("beta_x" %in% specify_bi_param_x) {
+        beta_x <- TRUE
+      } else {
+        beta_x <- FALSE
+      }
+      # phi_x
+      if ("phi_x" %in% specify_bi_param_x) {
+        phi_x <- TRUE
+      } else {
+        phi_x <- FALSE
+      }
+      
+      specify_bi_param_y <- input$specify_bi_param_y
+      # alpha_constant_y
+      if ("alpha_constant_y" %in% specify_bi_param_y) {
+        alpha_constant_y <- TRUE
+      } else {
+        alpha_constant_y <- FALSE
+      }
+      # beta_y
+      if ("beta_y" %in% specify_bi_param_y) {
+        beta_y <- TRUE
+      } else {
+        beta_y <- FALSE
+      }
+      # phi_x
+      if ("phi_y" %in% specify_bi_param_y) {
+        phi_y <- TRUE
+      } else {
+        phi_y <- FALSE
+      }
+      
+      specify_bi_param_coupling <- input$specify_bi_param_coupling
+      # delta_con_xy
+      if ("delta_con_xy" %in% specify_bi_param_coupling) {
+        delta_con_xy <- TRUE
+      } else {
+        delta_con_xy <- FALSE
+      }
+      # delta_con_yx
+      if ("delta_con_yx" %in% specify_bi_param_coupling) {
+        delta_con_yx <- TRUE
+      } else {
+        delta_con_yx <- FALSE
+      }
+      # xi_con_xy
+      if ("xi_con_xy" %in% specify_bi_param_coupling) {
+        xi_con_xy <- TRUE
+      } else {
+        xi_con_xy <- FALSE
+      }
+      # xi_con_yx
+      if ("xi_con_yx" %in% specify_bi_param_coupling) {
+        xi_con_yx <- TRUE
+      } else {
+        xi_con_yx <- FALSE
+      }
+      
+      # delta_lag_xy
+      if ("delta_lag_xy" %in% specify_bi_param_coupling) {
+        delta_lag_xy <- TRUE
+      } else {
+        delta_lag_xy <- FALSE
+      }
+      # delta_lag_yx
+      if ("delta_lag_yx" %in% specify_bi_param_coupling) {
+        delta_lag_yx <- TRUE
+      } else {
+        delta_lag_yx <- FALSE
+      }
+      # xi_lag_xy
+      if ("xi_lag_xy" %in% specify_bi_param_coupling) {
+        xi_lag_xy <- TRUE
+      } else {
+        xi_lag_xy <- FALSE
+      }
+      # xi_lag_yx
+      if ("xi_lag_yx" %in% specify_bi_param_coupling) {
+        xi_lag_yx <- TRUE
+      } else {
+        xi_lag_yx <- FALSE
+      }
+      
+      
+      # Fit bivariate lcsm and save the results 
+      bi_lavaan_results <- fit_bi_lcsm(data = simulate_bi_lcsm_path, 
+                                       var_x = names(simulate_bi_lcsm_path)[2:(input$specify_bi_timepoints + 1)],
+                                       var_y = names(simulate_bi_lcsm_path)[(input$specify_bi_timepoints + 2):ncol(simulate_bi_lcsm_path)],
+                                       model_x = list(
+                                         alpha_constant = alpha_constant_x,
+                                         beta = beta_x,
+                                         phi = phi_x
+                                       ),
+                                       model_y = list(        
+                                         alpha_constant = alpha_constant_y,
+                                         beta = beta_y,
+                                         phi = phi_y),
+                                       coupling = list(
+                                         delta_con_xy = delta_con_xy,
+                                         delta_con_yx = delta_con_yx,
+                                         delta_lag_xy = delta_lag_xy,
+                                         delta_lag_yx = delta_lag_yx,
+                                         xi_con_yx = xi_con_yx,
+                                         xi_con_xy = xi_con_xy,
+                                         xi_lag_yx = xi_lag_yx,
+                                         xi_lag_xy = xi_lag_xy
+                                       )
+      )
+      
+      incProgress(2/3)
+      
+      # Save the lavaan syntax that was used to create the layout matrix for semPlot
+      bi_lavaan_syntax <- fit_bi_lcsm(data = simulate_bi_lcsm_path, 
+                                      var_x = names(simulate_bi_lcsm_path)[2:(input$specify_bi_timepoints + 1)],
+                                      var_y = names(simulate_bi_lcsm_path)[(input$specify_bi_timepoints + 2):ncol(simulate_bi_lcsm_path)],
+                                      model_x = list(
+                                        alpha_constant = alpha_constant_x,
+                                        beta = beta_x,
+                                        phi = phi_x
+                                      ),
+                                      model_y = list(        
+                                        alpha_constant = alpha_constant_y,
+                                        beta = beta_y,
+                                        phi = phi_y),
+                                      coupling = list(
+                                        delta_con_xy = delta_con_xy,
+                                        delta_con_yx = delta_con_yx,
+                                        delta_lag_xy = delta_lag_xy,
+                                        delta_lag_yx = delta_lag_yx,
+                                        xi_con_yx = xi_con_yx,
+                                        xi_con_xy = xi_con_xy,
+                                        xi_lag_yx = xi_lag_yx,
+                                        xi_lag_xy = xi_lag_xy
+                                      ),
+                                      return_lavaan_syntax = TRUE, 
+                                      return_lavaan_syntax_string = TRUE)
+      
+      incProgress(3/3)
+      
+    })
+    
+    
+    
+    plot_lcsm(lavaan_object = bi_lavaan_results, 
+              lavaan_syntax = bi_lavaan_syntax,
+              lcsm = "bivariate",
+              whatLabels = "label",
+              what = "eq")
+  })
   
 
   
