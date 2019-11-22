@@ -469,7 +469,7 @@ ui <- tagList(navbarPage(
         ),
         # Maybe include tab with simplified Path Diagram?
         tabPanel("Path Diagram",
-                 "Not working yet.")
+                 plotOutput("plot_specify_uni_lcsm_path", width = 900, height = 550))
       )
     )
     ),
@@ -750,6 +750,7 @@ server <- function(input, output) {
   # Univariate ----
   # Reactive environment to simulate data
   simulate_uni_lcsm <- reactive({
+    
     sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
     sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
     sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
@@ -962,6 +963,156 @@ server <- function(input, output) {
               whatLabels = "label",
               what = "eq")
   })
+  
+  
+  # Path diagram ----
+  output$plot_specify_uni_lcsm_path <- renderPlot({
+    
+    withProgress(message = 'Making plot', value = 0, {
+      
+      # extract input variables
+      sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
+      sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
+      sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
+      sim_uni_beta_x <- input$sim_uni_beta_x
+      sim_uni_alpha_g2 <- input$sim_uni_alpha_g2
+      sim_uni_sigma2_g2 <- input$sim_uni_sigma2_g2
+      sim_uni_sigma_g2lx1 <- input$sim_uni_sigma_g2lx1
+      sim_uni_phi_x <- input$sim_uni_phi_x
+      
+      
+        specify_uni_param <- input$specify_uni_param
+        # alpha_constant
+        if ("alpha_constant" %in% specify_uni_param) {
+          alpha_constant <- TRUE
+        } else {
+          alpha_constant <- FALSE
+        }
+        # beta
+        if ("beta" %in% specify_uni_param) {
+          beta <- TRUE
+        } else {
+          beta <- FALSE
+        }
+        # phi
+        if ("phi" %in% specify_uni_param) {
+          phi <- TRUE
+        } else {
+          phi <- FALSE
+        }
+      
+      incProgress(1/6)
+      
+      sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
+      sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
+      sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
+      sim_uni_beta_x <- input$sim_uni_beta_x
+      sim_uni_alpha_g2 <- input$sim_uni_alpha_g2
+      sim_uni_sigma2_g2 <- input$sim_uni_sigma2_g2
+      sim_uni_sigma_g2lx1 <- input$sim_uni_sigma_g2lx1
+      sim_uni_phi_x <- input$sim_uni_phi_x
+      
+      # set constant change parameter for simulating data
+      if (base::is.na(sim_uni_alpha_g2) == TRUE | base::is.na(sim_uni_sigma2_g2) == TRUE | base::is.na(sim_uni_sigma_g2lx1) == TRUE){
+        sim_uni_model_alpha_constant_x <- FALSE
+      } else {
+        sim_uni_model_alpha_constant_x <- TRUE
+      }
+      
+      # set beta parameter for simulating data
+      if (base::is.na(sim_uni_beta_x) == TRUE){
+        sim_uni_model_beta_x <- FALSE
+      } else {
+        sim_uni_model_beta_x <- TRUE
+      }
+      
+      # set phi parameter for simulating data
+      if (base::is.na(sim_uni_phi_x) == TRUE){
+        sim_uni_model_phi_x <- FALSE
+      } else {
+        sim_uni_model_phi_x <- TRUE
+      }
+      
+      simulate_uni_lcsm <- sim_uni_lcsm(
+        var = input$specify_uni_var_name,
+        sample.nobs = 100,
+        timepoints = input$specify_uni_timepoints,
+        model = list(
+          alpha_constant = sim_uni_model_alpha_constant_x,
+          beta = sim_uni_model_beta_x,
+          phi = sim_uni_model_phi_x
+        ),
+        model_param = list(
+          gamma_lx1 = sim_uni_gamma_lx1,
+          sigma2_lx1 = sim_uni_sigma2_lx1,
+          sigma2_ux = sim_uni_sigma2_ux,
+          alpha_g2 = sim_uni_alpha_g2,
+          beta_x = sim_uni_beta_x,
+          sigma2_g2 = sim_uni_sigma2_g2,
+          sigma_g2lx1 = sim_uni_sigma_g2lx1,
+          phi_x = sim_uni_phi_x
+        )
+        )
+      
+      uni_lavaan_results <- fit_uni_lcsm(data = simulate_uni_lcsm, 
+                                         var = names(simulate_uni_lcsm)[-1],
+                                         model = list(alpha_constant = alpha_constant, 
+                                                      beta = beta, 
+                                                      phi = phi))
+      
+      incProgress(2/3)
+      
+      uni_lavaan_syntax <- fit_uni_lcsm(data = simulate_uni_lcsm, 
+                                        var = names(simulate_uni_lcsm)[-1],
+                                        model = list(alpha_constant = alpha_constant, 
+                                                     beta = beta, 
+                                                     phi = phi),
+                                        return_lavaan_syntax = TRUE, 
+                                        return_lavaan_syntax_string = TRUE)
+      
+      incProgress(3/3)
+      
+    })
+    
+    plot_lcsm(lavaan_object = uni_lavaan_results, 
+              lavaan_syntax = uni_lavaan_syntax,
+              lcsm = "univariate",
+              whatLabels = "label",
+              what = "eq")
+  })
+  
+#   specify_uni_param <- input$specify_uni_param
+#   # alpha_constant
+#   if ("alpha_constant" %in% specify_uni_param) {
+#     alpha_constant <- TRUE
+#   } else {
+#     alpha_constant <- FALSE
+#   }
+#   # beta
+#   if ("beta" %in% specify_uni_param) {
+#     beta <- TRUE
+#   } else {
+#     beta <- FALSE
+#   }
+#   # phi
+#   if ("phi" %in% specify_uni_param) {
+#     phi <- TRUE
+#   } else {
+#     phi <- FALSE
+#   }
+#   
+#   # Create lavaan syntax
+#   specify_uni_lcsm(
+#     timepoints = input$specify_uni_timepoints,
+#     model = list(
+#       alpha_constant = alpha_constant,
+#       beta = beta,
+#       phi = phi
+#     ),
+#     var = input$specify_uni_var_name,
+#     change_letter = "g"
+#   )
+# })
 
   # Bivariate ----
   # Reactive environment to simulate data
@@ -1519,6 +1670,7 @@ server <- function(input, output) {
   })
   
   
+
   
 }
 
