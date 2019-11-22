@@ -5,8 +5,8 @@ account: milanwiedemann
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1495016
-bundleId: 2607943
+bundleId: 2609568
 url: https://milanwiedemann.shinyapps.io/shinychange/
-when: 1574367341.09931
+when: 1574427568.68861
 asMultiple: FALSE
 asStatic: FALSE
