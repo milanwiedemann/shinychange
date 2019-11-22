@@ -118,10 +118,11 @@ ui <- tagList(navbarPage(
             "lavaan Code",
             helpText("Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."),
             verbatimTextOutput("lavaan_sim_uni_lcsm")
-          )
+          ),
           # Maybe include tab with simplified Path Diagram?
-          # tabPanel("Path diagram",
-          #          "Not working yet.")
+          tabPanel("Path Diagram",
+                   plotOutput("plot_sim_uni_lcsm_path", width = 900, height = 550)
+                   )
         )
       )
     ),
@@ -364,10 +365,10 @@ ui <- tagList(navbarPage(
             "lavaan Code",
             helpText("Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."),
             verbatimTextOutput("lavaan_sim_bi_lcsm")
-          )
+          ),
           # Maybe include tab with simplified Path Diagram?
-          # tabPanel("Path diagram",
-          #          "Not working yet.")
+          tabPanel("Path Diagram",
+                   plotOutput("plot_sim_bi_lcsm_path", width = 900, height = 550))
         )
       )
     )
@@ -456,15 +457,21 @@ ui <- tagList(navbarPage(
       )))),
       column(
         9,
-        h4("lavaan Syntax:"),
-        mainPanel(
+        h4("Results:"),
+        tabsetPanel(
+          tabPanel(
+            "lavaan Syntax",
           helpText(
             "Note: lavaan syntax with comments for the selected data characteristics and model parameters.
                      This syntax can be modified by hand and used in the 'model' argument of the function 'lavaan::lavaan()'"
           ),
           verbatimTextOutput("lavaan_uni_lcsm")
-        )
+        ),
+        # Maybe include tab with simplified Path Diagram?
+        tabPanel("Path Diagram",
+                 "Not working yet.")
       )
+    )
     ),
     # Specify bivariate LCSM ----
     tabPanel(
@@ -559,84 +566,25 @@ ui <- tagList(navbarPage(
                        )
                      )
                    ))),
-      
-
-      #   h4("Select Parameters:"),
-      #   wellPanel(
-      #     checkboxGroupInput(
-      #       "specify_bi_param_x",
-      #       label = "Construct X:",
-      #       choices = list(
-      #         "alpha_constant_x" = "alpha_constant_x",
-      #         "beta_x" = "beta_x",
-      #         "phi_x" = "phi_x"
-      #       ),
-      #       selected = c("alpha_constant_x", "beta_x", "phi_x")
-      #     ),
-      #     helpText(
-      #       "Note: alpha_constant_x (Constant change factor);
-      #       beta_x (Proportional change factor);
-      #       phi_x (Autoregression of change scores)."
-      #     )
-      #   ),
-      #   wellPanel(
-      #     checkboxGroupInput(
-      #       "specify_bi_param_y",
-      #       label = "Construct Y:",
-      #       choices = list(
-      #         "alpha_constant_y" = "alpha_constant_y",
-      #         "beta_y" = "beta_y",
-      #         "phi_y" = "phi_y"
-      #       ),
-      #       selected = c("alpha_constant_y", "beta_y", "phi_y")
-      #     ),
-      #     helpText(
-      #       "Note: alpha_constant_y (Constant change factor);
-      #       beta_y (Proportional change factor);
-      #       phi_y (Autoregression of change scores)."
-      #     )
-      #   ),
-      #   wellPanel(
-      #     checkboxGroupInput(
-      #       "specify_bi_param_coupling",
-      #       label = "Coupling:",
-      #       choices = list(
-      #         "delta_con_xy" = "delta_con_xy",
-      #         "delta_con_yx" = "delta_con_yx",
-      #         "delta_lag_xy" = "delta_lag_xy",
-      #         "delta_lag_yx" = "delta_lag_yx",
-      #         "xi_con_xy" = "xi_con_xy",
-      #         "xi_con_yx" = "xi_con_yx",
-      #         "xi_lag_xy" = "xi_lag_xy",
-      #         "xi_lag_yx" = "xi_lag_yx"
-      #       )
-      #     ),
-      #     helpText(
-      #       "Note: delta_con_xy (True score y predicting concurrent change score x);
-      #                                     delta_con_yx (True score x predicting concurrent change score y);
-      #                                     delta_lag_xy (True score y predicting subsequent change score x);
-      #                                     delta_lag_yx (True score x predicting subsequent change score y);
-      #                                     xi_con_xy (Change score y predicting concurrent change score x);
-      #                                     xi_con_yx (Change score x predicting concurrent change score y);
-      #                                     xi_lag_xy (Change score y predicting subsequent change score x);
-      #                                     xi_lag_yx (Change score x predicting subsequent change score y)."
-      #     )
-      #   )
-      # ),
       column(
         9,
-        h4("lavaan Syntax:"),
-        mainPanel(
+        h4("Results:"),
+        tabsetPanel(
+          tabPanel(
+            "lavaan Syntax",
           helpText(
             "Note: lavaan syntax with comments for the selected data characteristics and model parameters.
             This syntax can be modified by hand and used in the 'model' argument of the function 'lavaan::lavaan()'"
           ),
           verbatimTextOutput("lavaan_bi_lcsm")
-        )
+        ),
+        # Maybe include tab with simplified Path Diagram?
+        tabPanel("Path Diagram",
+                 "Not working yet.")
       )
     )
   )
-))
+)))
 
 # server ----
 server <- function(input, output) {
@@ -947,6 +895,63 @@ server <- function(input, output) {
         axis.text = element_text(size = 16),
         axis.title = element_text(size = 16, face = "bold")
       )
+  })
+  
+  
+  # Path diagram
+  output$plot_sim_uni_lcsm_path <- renderPlot({
+    
+    # extract input variables
+    sim_uni_gamma_lx1 <- input$sim_uni_gamma_lx1
+    sim_uni_sigma2_lx1 <- input$sim_uni_sigma2_lx1
+    sim_uni_sigma2_ux <- input$sim_uni_sigma2_ux
+    sim_uni_beta_x <- input$sim_uni_beta_x
+    sim_uni_alpha_g2 <- input$sim_uni_alpha_g2
+    sim_uni_sigma2_g2 <- input$sim_uni_sigma2_g2
+    sim_uni_sigma_g2lx1 <- input$sim_uni_sigma_g2lx1
+    sim_uni_phi_x <- input$sim_uni_phi_x
+    
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_uni_alpha_g2) == TRUE | base::is.na(sim_uni_sigma2_g2) == TRUE | base::is.na(sim_uni_sigma_g2lx1) == TRUE){
+      sim_uni_model_alpha_constant_x <- FALSE
+    } else {
+      sim_uni_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_uni_beta_x) == TRUE){
+      sim_uni_model_beta_x <- FALSE
+    } else {
+      sim_uni_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_uni_phi_x) == TRUE){
+      sim_uni_model_phi_x <- FALSE
+    } else {
+      sim_uni_model_phi_x <- TRUE
+    }
+    
+    uni_lavaan_results <- fit_uni_lcsm(data = simulate_uni_lcsm(), 
+                                       var = names(simulate_uni_lcsm())[-1],
+                                       model = list(alpha_constant = sim_uni_model_alpha_constant_x, 
+                                                    beta = sim_uni_model_beta_x, 
+                                                    phi = sim_uni_model_phi_x))
+    
+    
+    uni_lavaan_syntax <- fit_uni_lcsm(data = simulate_uni_lcsm(), 
+                                      var = names(simulate_uni_lcsm())[-1],
+                                      model = list(alpha_constant = sim_uni_model_alpha_constant_x, 
+                                                   beta = sim_uni_model_beta_x, 
+                                                   phi = sim_uni_model_phi_x),
+                                      return_lavaan_syntax = TRUE, 
+                                      return_lavaan_syntax_string = TRUE)
+
+    plot_lcsm(lavaan_object = uni_lavaan_results, 
+              lavaan_syntax = uni_lavaan_syntax,
+              lcsm = "univariate",
+              whatLabels = "label",
+              what = "eq")
   })
 
   # Bivariate ----
@@ -1334,6 +1339,168 @@ server <- function(input, output) {
       nrow = 2
     )
   })
+  
+  
+  # Path diagram
+  output$plot_sim_bi_lcsm_path <- renderPlot({
+    
+    # extract input variables
+    sim_bi_gamma_lx1 <- input$sim_bi_gamma_lx1
+    sim_bi_sigma2_lx1 <- input$sim_bi_sigma2_lx1
+    sim_bi_sigma2_ux <- input$sim_bi_sigma2_ux
+    sim_bi_beta_x <- input$sim_bi_beta_x
+    sim_bi_alpha_g2 <- input$sim_bi_alpha_g2
+    sim_bi_sigma2_g2 <- input$sim_bi_sigma2_g2
+    sim_bi_sigma_g2lx1 <- input$sim_bi_sigma_g2lx1
+    sim_bi_phi_x <- input$sim_bi_phi_x
+    
+    sim_bi_gamma_ly1 <- input$sim_bi_gamma_ly1
+    sim_bi_sigma2_ly1 <- input$sim_bi_sigma2_ly1
+    sim_bi_sigma2_uy <- input$sim_bi_sigma2_uy
+    sim_bi_beta_y <- input$sim_bi_beta_y
+    sim_bi_alpha_j2 <- input$sim_bi_alpha_j2
+    sim_bi_sigma2_j2 <- input$sim_bi_sigma2_j2
+    sim_bi_sigma_j2ly1 <- input$sim_bi_sigma_j2ly1
+    sim_bi_phi_y <- input$sim_bi_phi_y
+    
+    sim_bi_sigma_su <- input$sim_bi_sigma_su
+    sim_bi_sigma_ly1lx1 <- input$sim_bi_sigma_ly1lx1
+    sim_bi_sigma_g2ly1 <- input$sim_bi_sigma_g2ly1
+    sim_bi_sigma_j2lx1 <- input$sim_bi_sigma_j2lx1
+    sim_bi_sigma_j2g2 <- input$sim_bi_sigma_j2g2
+    
+    sim_bi_delta_lag_xy <- input$sim_bi_delta_lag_xy
+    sim_bi_delta_lag_yx <- input$sim_bi_delta_lag_yx
+    sim_bi_xi_lag_xy <- input$sim_bi_xi_lag_xy
+    sim_bi_xi_lag_yx <- input$sim_bi_xi_lag_yx
+    
+    # Construct X
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_g2) == TRUE | base::is.na(sim_bi_sigma2_g2) == TRUE | base::is.na(sim_bi_sigma_g2lx1) == TRUE){
+      sim_bi_model_alpha_constant_x <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_x <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_x) == TRUE){
+      sim_bi_model_beta_x <- FALSE
+    } else {
+      sim_bi_model_beta_x <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_x) == TRUE){
+      sim_bi_model_phi_x <- FALSE
+    } else {
+      sim_bi_model_phi_x <- TRUE
+    }
+    
+    # Construct y
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_alpha_j2) == TRUE | base::is.na(sim_bi_sigma2_j2) == TRUE | base::is.na(sim_bi_sigma_j2ly1) == TRUE){
+      sim_bi_model_alpha_constant_y <- FALSE
+    } else {
+      sim_bi_model_alpha_constant_y <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_beta_y) == TRUE){
+      sim_bi_model_beta_y <- FALSE
+    } else {
+      sim_bi_model_beta_y <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_phi_y) == TRUE){
+      sim_bi_model_phi_y <- FALSE
+    } else {
+      sim_bi_model_phi_y <- TRUE
+    }
+    
+    # Coupling
+    # set constant change parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_xy) == TRUE){
+      sim_bi_model_delta_lag_xy <- FALSE
+    } else {
+      sim_bi_model_delta_lag_xy <- TRUE
+    }
+    
+    # set beta parameter for simulating data
+    if (base::is.na(sim_bi_delta_lag_yx) == TRUE){
+      sim_bi_model_delta_lag_yx <- FALSE
+    } else {
+      sim_bi_model_delta_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_yx) == TRUE){
+      sim_bi_model_xi_lag_yx <- FALSE
+    } else {
+      sim_bi_model_xi_lag_yx <- TRUE
+    }
+    
+    # set phi parameter for simulating data
+    if (base::is.na(sim_bi_xi_lag_xy) == TRUE){
+      sim_bi_model_xi_lag_xy <- FALSE
+    } else {
+      sim_bi_model_xi_lag_xy <- TRUE
+    }
+
+    # Fit bivariate lcsm and save the results 
+    bi_lavaan_results <- fit_bi_lcsm(data = simulate_bi_lcsm(), 
+                                     var_x = names(simulate_bi_lcsm())[2:(input$sim_bi_timepoints + 1)],
+                                     var_y = names(simulate_bi_lcsm())[(input$sim_bi_timepoints + 2):ncol(simulate_bi_lcsm())],
+                                     model_x = list(
+                                       alpha_constant = sim_bi_model_alpha_constant_x,
+                                       beta = sim_bi_model_beta_x,
+                                       phi = sim_bi_model_phi_x
+                                     ),
+                                     model_y = list(        
+                                       alpha_constant = sim_bi_model_alpha_constant_y,
+                                       beta = sim_bi_model_beta_y,
+                                       phi = sim_bi_model_phi_y),
+                                     coupling = list(
+                                       delta_lag_xy = sim_bi_model_delta_lag_xy,
+                                       delta_lag_yx = sim_bi_model_delta_lag_yx,
+                                       xi_lag_yx = sim_bi_model_xi_lag_yx,
+                                       xi_lag_xy = sim_bi_model_xi_lag_xy
+                                     )
+                                     )
+    
+    # Save the lavaan syntax that was used to create the layout matrix for semPlot
+    bi_lavaan_syntax <- fit_bi_lcsm(data = simulate_bi_lcsm(), 
+                                    var_x = names(simulate_bi_lcsm())[2:(input$sim_bi_timepoints + 1)],
+                                    var_y = names(simulate_bi_lcsm())[(input$sim_bi_timepoints + 2):ncol(simulate_bi_lcsm())],
+                                    model_x = list(
+                                      alpha_constant = sim_bi_model_alpha_constant_x,
+                                      beta = sim_bi_model_beta_x,
+                                      phi = sim_bi_model_phi_x
+                                    ),
+                                    model_y = list(        
+                                      alpha_constant = sim_bi_model_alpha_constant_y,
+                                      beta = sim_bi_model_beta_y,
+                                      phi = sim_bi_model_phi_y),
+                                    coupling = list(
+                                      delta_lag_xy = sim_bi_model_delta_lag_xy,
+                                      delta_lag_yx = sim_bi_model_delta_lag_yx,
+                                      xi_lag_yx = sim_bi_model_xi_lag_yx,
+                                      xi_lag_xy = sim_bi_model_xi_lag_xy
+                                    ),
+                                    return_lavaan_syntax = TRUE, 
+                                    return_lavaan_syntax_string = TRUE)
+    
+    
+    
+    plot_lcsm(lavaan_object = bi_lavaan_results, 
+              lavaan_syntax = bi_lavaan_syntax,
+              lcsm = "bivariate",
+              whatLabels = "label",
+              what = "eq")
+  })
+  
+  
+  
 }
 
 shinyApp(ui = ui, server = server)
