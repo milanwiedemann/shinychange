@@ -28,7 +28,7 @@ ui <- tagList(navbarPage(
             "Data Characteristics",
             helpText(),  # just a placeholder for a little bit top margin
             wellPanel(
-              numericInput("sim_uni_timepoints", "Measurement Points:", value = 8),
+              numericInput("sim_uni_timepoints", "Measurement Points:", value = 7),
               numericInput("sim_uni_samplesize", "Sample Size:", value = 500),
               sliderInput(
                 "sim_uni_na_x_pct",
@@ -162,7 +162,7 @@ ui <- tagList(navbarPage(
               numericInput(
                 "sim_bi_timepoints",
                 "Measurement Points:",
-                value = 6,
+                value = 7,
                 min = 2
               ),
               numericInput("sim_bi_samplesize", "Sample Size:", value = 500),
@@ -200,143 +200,155 @@ ui <- tagList(navbarPage(
                          numericInput(
                            "sim_bi_gamma_lx1",
                            "gamma_lx1",
-                           value = 0,
+                           value = 32.52,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_lx1",
                            "sigma2_lx1",
-                           value = .5,
+                           value = 72.73,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_ux",
                            "sigma2_ux",
-                           value = .2,
+                           value = 31.44,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_beta_x",
                            "beta_x",
-                           value = -.1,
+                           value = -.30,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_alpha_g2",
                            "alpha_g2",
-                           value = -.4,
+                           value = 15.20,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_g2",
                            "sigma2_g2",
-                           value = .4,
+                           value = 5.79,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_g2lx1",
                            "sigma_g2lx1",
-                           value = .2,
+                           value = 14.46,
                            step = .1
                          ),
-                         numericInput("sim_bi_phi_x", "phi_x", value = NA, step = .1)
+                         numericInput("sim_bi_phi_x", 
+                                      "phi_x", 
+                                      value = NA, 
+                                      step = .1)
                        )
                      ),
                      tabPanel(
                        "Construct Y",
                        helpText(),  # just a placeholder for a little bit top margin
                        wellPanel(
-                         helpText("Note: See 'Help' for further information about the parameters."),
+                         helpText(
+                           "Note: See 'Help' for further information about the parameters.
+                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."
+                         ),
                          numericInput(
                            "sim_bi_gamma_ly1",
                            "gamma_ly1",
-                           value = 5,
+                           value = 34.36,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_ly1",
                            "sigma2_ly1",
-                           value = .2,
+                           value = 72.26,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_uy",
                            "sigma2_uy",
-                           value = .2,
+                           value = 33.34,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_beta_y",
                            "beta_y",
-                           value = -.2,
+                           value = -.49,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_alpha_j2",
                            "alpha_j2",
-                           value = -.2,
+                           value = 10.99,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma2_j2",
                            "sigma2_j2",
-                           value = .1,
+                           value = 17.85,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_j2ly1",
                            "sigma_j2ly1",
-                           value = .02,
+                           value = 25.98,
                            step = .1
                          ),
-                         numericInput("sim_bi_phi_y", "phi_y", value = .1, step = .1)
+                         numericInput("sim_bi_phi_y", 
+                                      "phi_y", 
+                                      value = NA, 
+                                      step = .1)
                        )
                      ),
                      tabPanel(
                        "Coupling",
                        helpText(),  # just a placeholder for a little bit top margin
                        wellPanel(
-                         helpText("Note: See 'Help' for further information about the parameters."),
+                         helpText(
+                           "Note: See 'Help' for further information about the parameters.
+                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."
+                         ),
                          numericInput(
                            "sim_bi_sigma_su",
                            "sigma_su",
-                           value = .01,
+                           value = 6.46,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_ly1lx1",
                            "sigma_ly1lx1",
-                           value = .2,
+                           value = 57.34,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_g2ly1",
                            "sigma_g2ly1",
-                           value = .1,
+                           value = 10.04,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_j2lx1",
                            "sigma_j2lx1",
-                           value = .1,
+                           value = 25.98,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_sigma_j2g2",
                            "sigma_j2g2",
-                           value = .01,
+                           value = .79,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_delta_lag_xy",
                            "delta_lag_xy",
-                           value = .13,
+                           value = 0.05,
                            step = .1
                          ),
                          numericInput(
                            "sim_bi_delta_lag_yx",
                            "delta_lag_yx",
-                           value = NA,
+                           value = 0.38,
                            step = .1
                          ),
                          numericInput(
@@ -348,7 +360,7 @@ ui <- tagList(navbarPage(
                          numericInput(
                            "sim_bi_xi_lag_yx",
                            "xi_lag_yx",
-                           value = .4,
+                           value = NA,
                            step = .1
                          ),
                        )
