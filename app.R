@@ -40,7 +40,7 @@ ui <- tagList(navbarPage(
               ),
               helpText(
                 "Note: Missing values are added randomly after simulating data."
-              ),
+              )
               # Maybe have a Simulate Data button at some point?
               # actionButton("simulate_action", "Simulate Data", class = "btn-primary")
             )
@@ -121,7 +121,10 @@ ui <- tagList(navbarPage(
           tabPanel(
             "lavaan Syntax",
             helpText(
-              "Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."
+              "Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score. 
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
             ),
             verbatimTextOutput("lavaan_sim_uni_lcsm")
           ),
@@ -402,8 +405,10 @@ ui <- tagList(navbarPage(
           tabPanel(
             "lavaan Syntax",
             helpText(
-              "Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan."
-            ),
+              "Note: The lavaan syntax below was used to simulate the data using the function simulateData() from the R package lavaan.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score. 
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."            ),
             verbatimTextOutput("lavaan_sim_bi_lcsm")
           ),
           # Maybe include tab with simplified Path Diagram?
@@ -488,7 +493,8 @@ ui <- tagList(navbarPage(
                    ),
                    helpText("Note: Number of repeated measurement points."),
                    textInput("specify_uni_var_name", "Variable Name:", value = "x"),
-                   helpText("Note: The variable name should start with a letter.")
+                   helpText("Note: Variable name to be used for generating lavaan syntax, changes wont show on the path diagram.
+                     Variable name should start with a letter.")
                  )
                ),
                tabPanel("Parameters",
@@ -512,8 +518,12 @@ ui <- tagList(navbarPage(
                tabPanel(
                  "lavaan Syntax",
                  helpText(
-                   "Note: lavaan syntax with comments for the selected data characteristics and model parameters.
-                     This syntax can be modified by hand and used in the 'model' argument of the function 'lavaan::lavaan()'"
+                   "Note: lavaan syntax for the selected data characteristics and model parameters.
+                    This syntax includes comments describing the different sections of the model and can be modified by hand.
+                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' for latent followed by the variable name of the observed score. 
+                    Change scores have the prefix 'd' for delta followed by the variable name of the observed score."
                  ),
                  verbatimTextOutput("lavaan_uni_lcsm")
                ),
@@ -560,14 +570,10 @@ ui <- tagList(navbarPage(
                  ),
                  wellPanel(
                    textInput("specify_bi_var_name_x", "Variable Name Construct X:", value = "x"),
-                   helpText(
-                     "Note: The variable name should start with a letter."
-                   )
-                 ),
-                 wellPanel(
                    textInput("specify_var_name_y", "Variable Name Construct Y:", value = "y"),
                    helpText(
-                     "Note: The variable name should start with a letter."
+                     "Note: Variable names to be used for generating lavaan syntax, changes wont show on the path diagram.
+                     Variable names should start with a letter."
                    )
                  )
                ),
@@ -622,8 +628,12 @@ ui <- tagList(navbarPage(
                tabPanel(
                  "lavaan Syntax",
                  helpText(
-                   "Note: lavaan syntax with comments for the selected data characteristics and model parameters.
-            This syntax can be modified by hand and used in the 'model' argument of the function 'lavaan::lavaan()'"
+                   "Note: lavaan syntax for the selected data characteristics and model parameters.
+                    This syntax includes comments describing the different sections of the model and can be modified by hand.
+                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score. 
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
                  ),
                  verbatimTextOutput("lavaan_bi_lcsm")
                ),
