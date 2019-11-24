@@ -38,6 +38,9 @@ ui <- tagList(navbarPage(
                 value = 0,
                 step = 1
               ),
+              helpText(
+                "Note: Missing values are added randomly after simulating data."
+              ),
               # Maybe have a Simulate Data button at some point?
               # actionButton("simulate_action", "Simulate Data", class = "btn-primary")
             )
@@ -49,7 +52,7 @@ ui <- tagList(navbarPage(
             wellPanel(
               helpText(
                 "Note: See 'Help' for further information about the parameters.
-                       Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 16."
+                       Example parameters in the input fields below were taken from Grimm, Ram & Estabrook (2017), Chapter 16."
               ),
               numericInput(
                 "sim_uni_gamma_lx1",
@@ -182,6 +185,9 @@ ui <- tagList(navbarPage(
                 value = 0,
                 step = 1
               ),
+              helpText(
+                "Note: Missing values are added randomly after simulating data."
+              ),
               # Maybe have a Simulate Data button at some point?
               # actionButton("simulate_action", "Simulate data", class = "btn-primary")
             )
@@ -195,7 +201,7 @@ ui <- tagList(navbarPage(
                        wellPanel(
                          helpText(
                            "Note: See 'Help' for further information about the parameters.
-                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."
+                           Example parameters in the input fields below were taken from Grimm, Ram & Estabrook (2017), Chapter 17."
                          ),
                          numericInput(
                            "sim_bi_gamma_lx1",
@@ -251,7 +257,7 @@ ui <- tagList(navbarPage(
                        wellPanel(
                          helpText(
                            "Note: See 'Help' for further information about the parameters.
-                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."
+                           Example parameters in the input fields below were taken from Grimm, Ram & Estabrook (2017), Chapter 17."
                          ),
                          numericInput(
                            "sim_bi_gamma_ly1",
@@ -307,7 +313,7 @@ ui <- tagList(navbarPage(
                        wellPanel(
                          helpText(
                            "Note: See 'Help' for further information about the parameters.
-                           Example parameters in the input fields below have been taken from Grimm, Ram & Estabrook (2017), Chapter 17."
+                           Example parameters in the input fields below were taken from Grimm, Ram & Estabrook (2017), Chapter 17."
                          ),
                          numericInput(
                            "sim_bi_sigma_su",
