@@ -136,9 +136,9 @@ ui <- tagList(navbarPage(
             fluidRow(
               column(4,
                      checkboxInput("plot_sim_uni_lcsm_path_whatLabels", "Show the parameter names as labels", value = TRUE, width = NULL)),
-              # column(4,
-              #        checkboxInput("anotheroneinthesamerow", "label", value = FALSE, width = NULL))
-              # )
+              column(4,
+                     checkboxInput("plot_sim_uni_lcsm_path_colorgroups", "I like colours", value = FALSE, width = NULL)
+              )
             ),
             fluidRow(
               column(8,
@@ -419,9 +419,9 @@ ui <- tagList(navbarPage(
             fluidRow(
               column(4,
                      checkboxInput("plot_sim_bi_lcsm_path_whatLabels", "Show the parameter names as labels", value = TRUE, width = NULL)),
-              # column(4,
-              #        checkboxInput("anotheroneinthesamerow", "label", value = FALSE, width = NULL))
-              # )
+              column(4,
+                     checkboxInput("plot_sim_bi_lcsm_path_colorgroups", "I like colours", value = FALSE, width = NULL)
+              )
             ),
             fluidRow(
               column(8,
@@ -522,8 +522,8 @@ ui <- tagList(navbarPage(
                     This syntax includes comments describing the different sections of the model and can be modified by hand.
                     Modified syntax could be used in the 'model' argument of functions from the lavaan package.
                     Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
-                    Latent true scores have the prefix 'l' for latent followed by the variable name of the observed score. 
-                    Change scores have the prefix 'd' for delta followed by the variable name of the observed score."
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score. 
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
                  ),
                  verbatimTextOutput("lavaan_uni_lcsm")
                ),
@@ -534,9 +534,9 @@ ui <- tagList(navbarPage(
                    fluidRow(
                      column(4,
                             checkboxInput("plot_specify_uni_lcsm_path_whatLabels", "Show the parameter names as labels", value = TRUE, width = NULL)),
-                   # column(4,
-                   #        checkboxInput("anotheroneinthesamerow", "label", value = FALSE, width = NULL))
-                   # )
+                     column(4,
+                            checkboxInput("plot_specify_uni_lcsm_path_colorgroups", "I like colours", value = FALSE, width = NULL)
+                     )
                    ),
                  fluidRow(
                    column(8,
@@ -644,9 +644,9 @@ ui <- tagList(navbarPage(
                  fluidRow(
                    column(4,
                           checkboxInput("plot_specify_bi_lcsm_path_whatLabels", "Show the parameter names as labels", value = TRUE, width = NULL)),
-                   # column(4,
-                   #        checkboxInput("anotheroneinthesamerow", "label", value = FALSE, width = NULL))
-                   # )
+                   column(4,
+                          checkboxInput("plot_specify_bi_lcsm_path_colorgroups", "I like colours", value = FALSE, width = NULL)
+                   )
                  ),
                  fluidRow(
                    column(8,
@@ -891,7 +891,7 @@ server <- function(input, output) {
   # Create data table
   output$datatable_sim_uni_lcsm <-
     DT::renderDataTable(
-      DT::datatable(simulate_uni_lcsm(), options = list(searching = FALSE)) %>%
+      DT::datatable(simulate_uni_lcsm(), options = list(searching = FALSE), rownames= FALSE) %>%
         DT::formatRound(
           digits = 2,
           columns = 2:ncol(simulate_uni_lcsm())
@@ -1046,15 +1046,26 @@ server <- function(input, output) {
       plot_sim_uni_lcsm_path_whatLabels <- "label"
     }
     
-    plot_lcsm(
-      lavaan_object = uni_lavaan_results,
-      lavaan_syntax = uni_lavaan_syntax,
-      lcsm = "univariate",
-      whatLabels = plot_sim_uni_lcsm_path_whatLabels
-    )
+    if (input$plot_sim_uni_lcsm_path_colorgroups == FALSE){
+      plot_lcsm(
+        lavaan_object = uni_lavaan_results,
+        lavaan_syntax = uni_lavaan_syntax,
+        lcsm = "univariate",
+        whatLabels = plot_sim_uni_lcsm_path_whatLabels
+        )
+    } else {
+      plot_lcsm(
+        lavaan_object = uni_lavaan_results,
+        lavaan_syntax = uni_lavaan_syntax,
+        lcsm = "univariate",
+        whatLabels = plot_sim_uni_lcsm_path_whatLabels,
+        groups = "latents",
+        borders = FALSE
+      )
+    }
+    
   })
-  
-  
+
   # Path diagram ----
   output$plot_specify_uni_lcsm_path <- renderPlot({
     withProgress(message = "Making plot", value = 0, {
@@ -1178,12 +1189,25 @@ server <- function(input, output) {
       plot_specify_uni_lcsm_path_whatLabels <- "label"
     }
     
-    plot_lcsm(
-      lavaan_object = uni_lavaan_results,
-      lavaan_syntax = uni_lavaan_syntax,
-      lcsm = "univariate",
-      whatLabels = plot_specify_uni_lcsm_path_whatLabels
-    )
+    
+    if (input$plot_specify_uni_lcsm_path_colorgroups == FALSE){
+      plot_lcsm(
+        lavaan_object = uni_lavaan_results,
+        lavaan_syntax = uni_lavaan_syntax,
+        lcsm = "univariate",
+        whatLabels = plot_specify_uni_lcsm_path_whatLabels
+      )
+    } else {
+      plot_lcsm(
+        lavaan_object = uni_lavaan_results,
+        lavaan_syntax = uni_lavaan_syntax,
+        lcsm = "univariate",
+        whatLabels = plot_specify_uni_lcsm_path_whatLabels,
+        groups = "latents",
+        borders = FALSE
+      )
+    }
+    
   })
   
   # Bivariate ----
@@ -1363,7 +1387,9 @@ server <- function(input, output) {
   
   # Create data table
   output$datatable_sim_bi_lcsm <-
-    DT::renderDataTable(DT::datatable(simulate_bi_lcsm(), options = list(searching = FALSE)) %>%
+    DT::renderDataTable(DT::datatable(simulate_bi_lcsm(), 
+                                      options = list(searching = FALSE), 
+                                      rownames= FALSE) %>%
                           DT::formatRound(
                             digits = 2,
                             columns = 2:ncol(simulate_bi_lcsm())
@@ -1748,12 +1774,24 @@ server <- function(input, output) {
       plot_sim_bi_lcsm_path_whatLabels <- "label"
     }
     
-    plot_lcsm(
-      lavaan_object = bi_lavaan_results,
-      lavaan_syntax = bi_lavaan_syntax,
-      lcsm = "bivariate",
-      whatLabels = plot_sim_bi_lcsm_path_whatLabels
-    )
+    
+    if (input$plot_sim_bi_lcsm_path_colorgroups == FALSE){
+      plot_lcsm(
+        lavaan_object = bi_lavaan_results,
+        lavaan_syntax = bi_lavaan_syntax,
+        lcsm = "bivariate",
+        whatLabels = plot_sim_bi_lcsm_path_whatLabels
+      )
+    } else {
+      plot_lcsm(
+        lavaan_object = bi_lavaan_results,
+        lavaan_syntax = bi_lavaan_syntax,
+        lcsm = "bivariate",
+        whatLabels = plot_sim_bi_lcsm_path_whatLabels,
+        groups = "latents",
+        borders = FALSE
+      )
+    }
   })
   
   
@@ -2084,12 +2122,32 @@ server <- function(input, output) {
       plot_specify_bi_lcsm_path_whatLabels <- "label"
     }
     
-    plot_lcsm(
-      lavaan_object = bi_lavaan_results,
-      lavaan_syntax = bi_lavaan_syntax,
-      lcsm = "bivariate",
-      whatLabels = plot_specify_bi_lcsm_path_whatLabels
-    )
+    # plot_lcsm(
+    #   lavaan_object = bi_lavaan_results,
+    #   lavaan_syntax = bi_lavaan_syntax,
+    #   lcsm = "bivariate",
+    #   whatLabels = plot_specify_bi_lcsm_path_whatLabels
+    # )
+    
+    
+    if (input$plot_specify_bi_lcsm_path_colorgroups == FALSE){
+      plot_lcsm(
+        lavaan_object = bi_lavaan_results,
+        lavaan_syntax = bi_lavaan_syntax,
+        lcsm = "bivariate",
+        whatLabels = plot_specify_bi_lcsm_path_whatLabels
+      )
+    } else {
+      plot_lcsm(
+        lavaan_object = bi_lavaan_results,
+        lavaan_syntax = bi_lavaan_syntax,
+        lcsm = "bivariate",
+        whatLabels = plot_specify_bi_lcsm_path_whatLabels,
+        groups = "latents",
+        borders = FALSE
+      )
+    }
+    
   })
 }
 
