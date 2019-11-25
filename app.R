@@ -711,14 +711,14 @@ ui <- tagList(navbarPage(
                         checkboxInput("header", "Variable names included", TRUE),
                         
                         # Input: Select separator ---
-                        radioButtons("sep", "Separator",
+                        radioButtons("uni_sep", "Separator",
                                      choices = c("Comma" = ",",
                                                  "Semicolon" = ";",
                                                  "Tab" = "\t"),
                                      selected = ","),
                         
                         # Input: Select quotes ---
-                        radioButtons("quote", "Quote",
+                        radioButtons("uni_quote", "Quote",
                                      choices = c(None = "",
                                                  "Double Quote" = '"',
                                                  "Single Quote" = "'"),
@@ -726,7 +726,7 @@ ui <- tagList(navbarPage(
                         
                         # Horizontal line ---
                         tags$hr(),
-                          checkboxInput("uni_sample_data_check", "Select Example Data", F)
+                          checkboxInput("uni_sample_data_check", "Load Example Data", FALSE)
       )
       ),
       tabPanel("Select Variables",
@@ -772,14 +772,14 @@ ui <- tagList(navbarPage(
     column(8, h4("Results:"),
       tabsetPanel(
       tabPanel("Data",
-               helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
+               helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal."),  # just a placeholder for a little bit top margin
                
                DT::dataTableOutput("contents")),
       tabPanel(
         "lavaan Syntax",
         helpText(
           "Note: Based on the selected variables and parameters the lavaan syntax below was used to fit a univariate latent change score model.
-           The selected variable names were renamed starting with x1 in the order they were selected in the 'Select Variables for Construct X' box.
+           The selected variable names were renamed starting with x1 in the order they were selected in the 'Select Construct X Variables' box.
                     Observed scores in the syntax are 'x' followed by a number indicating the measurement point.
                     Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
                     Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
@@ -864,14 +864,14 @@ ui <- tagList(navbarPage(
                         checkboxInput("header", "Variable names included", TRUE),
                         
                         # Input: Select separator ---
-                        radioButtons("sep", "Separator",
+                        radioButtons("bi_sep", "Separator",
                                      choices = c("Comma" = ",",
                                                  "Semicolon" = ";",
                                                  "Tab" = "\t"),
                                      selected = ","),
                         
                         # Input: Select quotes ---
-                        radioButtons("quote", "Quote",
+                        radioButtons("bi_quote", "Quote",
                                      choices = c(None = "",
                                                  "Double Quote" = '"',
                                                  "Single Quote" = "'"),
@@ -879,7 +879,7 @@ ui <- tagList(navbarPage(
                         
                         # Horizontal line ---
                         tags$hr(),
-                        checkboxInput("bi_sample_data_check", "Select Example Data", FALSE)
+                        checkboxInput("bi_sample_data_check", "Load Example Data", FALSE)
                       )
              ),
              tabPanel("Select Variables",
@@ -973,14 +973,14 @@ ui <- tagList(navbarPage(
     column(8, h4("Results:"),
            tabsetPanel(
              tabPanel("Data",
-                      helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
+                      helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal."),  # just a placeholder for a little bit top margin
                       
                       DT::dataTableOutput("contents_bi")),
              tabPanel(
                "lavaan Syntax",
                helpText(
                  "Note: Based on the selected variables and parameters the lavaan syntax below was used to fit a univariate latent change score model.
-           The selected variable names were renamed starting with x1 in the order they were selected in the 'Select Variables for Construct X' box.
+           The selected variable names were renamed starting with x1 (and y1) in the order they were selected in the 'Select Construct X/Y Variables' boxes.
                     Observed scores in the syntax are 'x' followed by a number indicating the measurement point.
                     Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
                     Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
@@ -1012,7 +1012,7 @@ ui <- tagList(navbarPage(
                         hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
   https://CRAN.R-project.org/package=broom.")
                       ))),
-             tabPanel("Longitudinal Plot",
+             tabPanel("Longitudinal Plots",
                       plotOutput("plot_fit_bi_lcsm", width = 850, height = 550),
                       hr("Reference: Hadley Wickham (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.")),
              tabPanel(
@@ -2558,8 +2558,8 @@ server <- function(input, output, session) {
       
       read.csv(input$file1$datapath,
                      header = input$header,
-                     sep = input$sep,
-                     quote = input$quote)
+                     sep = input$uni_sep,
+                     quote = input$uni_quote)
       
     } else {
       lcsm::data_uni_lcsm
@@ -2849,8 +2849,8 @@ server <- function(input, output, session) {
       
       read.csv(input$file_bi$datapath,
                header = input$header,
-               sep = input$sep,
-               quote = input$quote)
+               sep = input$bi_sep,
+               quote = input$bi_quote)
       
     } else {
       lcsm::data_bi_lcsm
