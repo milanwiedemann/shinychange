@@ -268,7 +268,7 @@ ui <- tagList(navbarPage(
           ),
           # Enter Parameters ----
           tabPanel(
-            "Parameters",
+            "Set Parameters",
             helpText(),
             # just a placeholder for a little bit top margin
             wellPanel(
@@ -431,7 +431,7 @@ ui <- tagList(navbarPage(
             )
           ),
           # Enter Parameters ----
-          tabPanel("Parameters",
+          tabPanel("Set Parameters",
                    tabsetPanel(
                      tabPanel(
                        "Construct X",

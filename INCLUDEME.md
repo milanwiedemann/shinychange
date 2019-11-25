@@ -6,6 +6,7 @@ At the moment it is possible to:
 - **Generate lavaan Syntax** for different model specifications and varying time points
 - **Simulate Data** to explore the effect of different parameters
 - **Fit Models** using example datasets
+- Create **Longitudinal Plots** and simplified **Path Diagrams** to visualise data and model specifications 
 
 I started working on this project to better understand how latent change score modeling works.
 The underlying functions of this shiny application come from the [lcsm](https://github.com/milanwiedemann/lcsm) R package that I created to make it easier to write lavaan syntax for different models.
