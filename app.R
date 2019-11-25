@@ -43,7 +43,7 @@ ui <- tagList(navbarPage(
                    )
                  )
                ),
-               tabPanel("Parameters",
+               tabPanel("Select Parameters",
                         helpText(),  # just a placeholder for a little bit top margin
                         wellPanel(
                           checkboxGroupInput(
@@ -139,7 +139,7 @@ ui <- tagList(navbarPage(
                  )
                ),
                tabPanel(
-                 "Parameters",
+                 "Select Parameters",
                  helpText(),
                  # just a placeholder for a little bit top margin
                  wellPanel(
@@ -760,7 +760,10 @@ ui <- tagList(navbarPage(
                    )
                  )
                )
-      )
+      ),
+      tabPanel("Help",
+               helpText(),  # just a placeholder for a little bit top margin
+               includeMarkdown("INCLUDEME_UNI.md"))
       
       ),
       
@@ -769,7 +772,7 @@ ui <- tagList(navbarPage(
     column(8, h4("Results:"),
       tabsetPanel(
       tabPanel("Data",
-               helpText("Note: Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
+               helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
                
                DT::dataTableOutput("contents")),
       tabPanel(
@@ -844,8 +847,206 @@ ui <- tagList(navbarPage(
     ))
   ),
   # Fit bivariate LCSM ----
-  tabPanel("Bivariate LCSM",
-           )
+  tabPanel(
+    "Bivariate LCSM",
+    column(width = 4, h4("Options:"),
+           tabsetPanel(
+             tabPanel("Load Data",
+                      helpText(),
+                      wellPanel(
+                        # Input: Select a file ---
+                        fileInput("file_bi", "Select CSV File",
+                                  multiple = TRUE,
+                                  accept = c("text/csv",
+                                             "text/comma-separated-values,text/plain",
+                                             ".csv")),
+                        # Input: Checkbox if file has header ---
+                        checkboxInput("header", "Variable names included", TRUE),
+                        
+                        # Input: Select separator ---
+                        radioButtons("sep", "Separator",
+                                     choices = c("Comma" = ",",
+                                                 "Semicolon" = ";",
+                                                 "Tab" = "\t"),
+                                     selected = ","),
+                        
+                        # Input: Select quotes ---
+                        radioButtons("quote", "Quote",
+                                     choices = c(None = "",
+                                                 "Double Quote" = '"',
+                                                 "Single Quote" = "'"),
+                                     selected = '"'),
+                        
+                        # Horizontal line ---
+                        tags$hr(),
+                        checkboxInput("bi_sample_data_check", "Select Example Data", FALSE)
+                      )
+             ),
+             tabPanel("Select Variables",
+                      helpText(),  # just a placeholder for a little bit top margin
+                      wellPanel(
+                        # numericInput(
+                        #   "fit_uni_timepoints",
+                        #   "Measurement Points:",
+                        #   value = 10,
+                        #   min = 2
+                        # ),
+                        
+                        selectInput("bi_select_id", "Select ID Variable:", c("ID Variable"),  multiple = FALSE
+                        ),
+                        
+                        selectInput("bi_select_vars_x", "Select Construct X Variables:", c("Variable X 1", "Variable X 2", "Variable X 3"),  multiple = TRUE
+                        ),
+                        selectInput("bi_select_vars_y", "Select Construct Y Variables:", c("Variable Y 1", "Variable Y 2", "Variable Y 3"),  multiple = TRUE
+                        ),
+                        helpText("Select variables in the order that reflects the time points they were measured (i.e. variable with values of the first measuresment of construct X is selected first).")
+                      )
+             ),
+             tabPanel(
+               "Select Parameters",
+               helpText(),
+               # just a placeholder for a little bit top margin
+               wellPanel(
+                 checkboxGroupInput(
+                   "fit_bi_param_x",
+                   label = "Construct X:",
+                   choices = list(
+                     "Constant change factor [alpha_g]" = "alpha_constant_x",
+                     "Proportional change factor [beta_x]" = "beta_x",
+                     "Autoregression of change scores [phi_x]" = "phi_x"
+                   ),
+                   selected = c("alpha_constant_x", "beta_x", "phi_x")
+                 )
+               ),
+               wellPanel(
+                 checkboxGroupInput(
+                   "fit_bi_param_y",
+                   label = "Construct Y:",
+                   choices = list(
+                     "Constant change factor [alpha_j]" = "alpha_constant_y",
+                     "Proportional change factor [beta_y]" = "beta_y",
+                     "Autoregression of change scores [phi_y]" = "phi_y"
+                   ),
+                   selected = c("alpha_constant_y", "beta_y", "phi_y")
+                 )
+               ),
+               wellPanel(
+                 checkboxGroupInput(
+                   "fit_bi_param_coupling",
+                   label = "Coupling:",
+                   choices = list(
+                     "Change score x (t) determined by true score y (t) [delta_con_xy]" = "delta_con_xy",
+                     "Change score y (t) determined by true score x (t)  [delta_con_yx]" = "delta_con_yx",
+                     "Change score x (t) determined by true score y (t-1) [delta_lag_xy]" = "delta_lag_xy",
+                     "Change score y (t) determined by true score x (t-1) [delta_lag_yx]" = "delta_lag_yx",
+                     "Change score x (t) determined by change score y (t) [xi_con_xy]" = "xi_con_xy",
+                     "Change score y (t) determined by change score x (t) [xi_con_yx]" = "xi_con_yx",
+                     "Change score x (t) determined by change score y (t-1) [xi_lag_xy]" = "xi_lag_xy",
+                     "Change score y (t) determined by change score x (t-1) [xi_lag_yx]" = "xi_lag_yx"
+                   )
+                 )
+               )
+             ),
+             tabPanel("Help",
+                      tabsetPanel(
+                        tabPanel(
+                          "Construct X",
+                          helpText(),
+                          # just a placeholder for a little bit top margin
+                          includeMarkdown("INCLUDEME_BI_X.md")
+                        ),
+                        tabPanel(
+                          "Construct Y",
+                          helpText(),
+                          # just a placeholder for a little bit top margin
+                          includeMarkdown("INCLUDEME_BI_Y.md")
+                        ),
+                        tabPanel("Coupling",
+                                 helpText(),  # just a placeholder for a little bit top margin
+                                 includeMarkdown("INCLUDEME_BI_C.md"))
+                      ))
+             
+           ),
+           
+           actionButton("fit_bi_lcsm_go", "Fit model", class = "btn-primary")
+    ),
+    column(8, h4("Results:"),
+           tabsetPanel(
+             tabPanel("Data",
+                      helpText("Note: Datatable for the selected variables. Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
+                      
+                      DT::dataTableOutput("contents_bi")),
+             tabPanel(
+               "lavaan Syntax",
+               helpText(
+                 "Note: Based on the selected variables and parameters the lavaan syntax below was used to fit a univariate latent change score model.
+           The selected variable names were renamed starting with x1 in the order they were selected in the 'Select Variables for Construct X' box.
+                    Observed scores in the syntax are 'x' followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
+               ),
+               verbatimTextOutput("lavaan_fit_bi_lcsm")
+             ),
+             tabPanel("Estimated Parameters",
+                      helpText("Click 'Fit model' on the left to fit a univariate LCSM and extract the estimated model parameters."),
+                      DT::dataTableOutput("fit_bi_lcsm_param"),
+                      hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.")
+             ),
+             tabPanel("Fit Statistics",
+                      helpText("Click 'Fit model' on the left to fit a univariate LCSM and extract the fit statistics."),
+                      fluidRow(column(
+                        4,
+                        checkboxInput(
+                          "fit_bi_lcsm_fit_stats_details",
+                          "Show details",
+                          value = FALSE,
+                          width = NULL
+                        )
+                      )
+                      ),
+                      fluidRow(column(
+                        8,
+                        
+                        DT::dataTableOutput("fit_bi_lcsm_fit_stats"),
+                        hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.")
+                      ))),
+             tabPanel("Longitudinal Plot",
+                      plotOutput("plot_fit_bi_lcsm", width = 850, height = 550),
+                      hr("Reference: Hadley Wickham (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.")),
+             tabPanel(
+               "Path Diagram",
+               helpText(),
+               # just a placeholder for a little bit top margin
+               # wellPanel(
+               fluidRow(column(
+                 4,
+                 checkboxInput(
+                   "plot_fit_bi_lcsm_path_whatLabels",
+                   "Show the parameter names as labels",
+                   value = TRUE,
+                   width = NULL
+                 )
+               ),
+               column(
+                 4,
+                 checkboxInput(
+                   "plot_fit_bi_lcsm_path_colorgroups",
+                   "I like colours",
+                   value = FALSE,
+                   width = NULL
+                 )
+               )),
+               fluidRow(column(
+                 8,
+                 plotOutput("plot_fit_bi_lcsm_path", width = 900, height = 550)
+               )),
+               hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
+             )
+           ))
+  )
   )
 ))
 
@@ -2341,7 +2542,10 @@ server <- function(input, output, session) {
   
   
   # Fit models ----
-  # Univariate ----
+  
+  
+  
+  # @ FIT UNIVARIATE START -----
   
   fit_uni_data <- reactive({ 
     # input$file1 will be NULL initially. After the user selects
@@ -2393,6 +2597,7 @@ server <- function(input, output, session) {
           axis.title = element_text(size = 16, face = "bold"))
   })
   
+  # lavaan syntax -----
   output$lavaan_fit_uni_lcsm <- renderText({
     fit_uni_param <- input$fit_uni_param
     # alpha_constant
@@ -2430,7 +2635,7 @@ server <- function(input, output, session) {
   
   
   
-  
+  # fit model ----
   fit_uni_data_lcsm <- reactive({ 
     
     fit_uni_param <- input$fit_uni_param
@@ -2591,29 +2796,25 @@ server <- function(input, output, session) {
       
     })
   })
-
-  
-  
   
   # OBSERVE -----
   # I got errors when these ovserve were further up so I'll leave them down here for now
   
   observe({
-
-      
-      x <- names(fit_uni_data())
-      
-      # Can use character(0) to remove all choices
-      if (is.null(x))
-        x <- character(0)
-      
-      # Can also set the label and select items
-      updateSelectInput(session, "uni_select_vars",
-                        # label = paste("Select input label", length(x)),
-                        choices = x,
-                        selected = x[2:length(names(fit_uni_data()))]
-      )
-
+    
+    x <- names(fit_uni_data())
+    
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectInput(session, "uni_select_vars",
+                      # label = paste("Select input label", length(x)),
+                      choices = x,
+                      selected = x[2:length(names(fit_uni_data()))]
+    )
+    
   })
   
   observe({
@@ -2631,14 +2832,760 @@ server <- function(input, output, session) {
     )
   })
   
+  # @ FIT UNIVARIATE END -----
+
   
-  # update time points based on number of vars selected ... doesnt really work at the moment, dont knw why
-  # observe({
-  #   updateNumericInput(session, "fit_uni_timepoints",
-  #                      value = length(names(fit_uni_data())) - 1
-  #                      )
+  
+  # @ FIT BIVARIATE START ----
+  
+  fit_bi_data <- reactive({ 
+    # input$file1 will be NULL initially. After the user selects
+    # and uploads a file, head of that data file by default,
+    # or all rows if selected, will be shown.
+    
+    if (input$bi_sample_data_check == FALSE) {
+      
+      req(input$file_bi)
+      
+      read.csv(input$file_bi$datapath,
+               header = input$header,
+               sep = input$sep,
+               quote = input$quote)
+      
+    } else {
+      lcsm::data_bi_lcsm
+    }
+  })
+  
+  output$contents_bi <- DT::renderDataTable({
+    
+    df <-  fit_bi_data() %>% 
+      select(input$bi_select_id, input$bi_select_vars_x,
+             input$bi_select_vars_y)
+    
+    DT::datatable(df,
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE)) %>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df)
+      )
+  })
+  
+  # Longitudinal plot ----
+  
+  output$plot_fit_bi_lcsm <- renderPlot({
+    plot_x <- fit_bi_data() %>%
+      plot_trajectories(
+        id_var = input$bi_select_id,
+        var_list = input$bi_select_vars_x,
+        xlab = "Time",
+        ylab = "Construct X",
+        connect_missing = FALSE,
+        random_sample_frac = 1
+      ) +
+      theme(axis.text = element_text(size = 16),
+            axis.title = element_text(size = 16, face = "bold"))
+    
+    # Create plot for y
+    plot_y <- fit_bi_data() %>%
+      plot_trajectories(
+        id_var = input$bi_select_id,
+        var_list = input$bi_select_vars_y,
+        xlab = "Time",
+        ylab = "Construct Y",
+        connect_missing = FALSE,
+        random_sample_frac = 1
+      ) +
+      theme(axis.text = element_text(size = 16),
+            axis.title = element_text(size = 16, face = "bold"))
+    
+    # Combine plots
+    ggpubr::ggarrange(
+      plot_x,
+      plot_y,
+      labels = c("a", "b"),
+      ncol = 1,
+      nrow = 2
+    )
+  })
+  
+  
+  # lavaan syntax ----
+  output$lavaan_fit_bi_lcsm <- renderText({
+    
+    # extact param from cvheckboxes
+    fit_bi_param_x <- input$fit_bi_param_x
+    # alpha_constant_x
+    if ("alpha_constant_x" %in% fit_bi_param_x) {
+      alpha_constant_x <- TRUE
+    } else {
+      alpha_constant_x <- FALSE
+    }
+    # beta_x
+    if ("beta_x" %in% fit_bi_param_x) {
+      beta_x <- TRUE
+    } else {
+      beta_x <- FALSE
+    }
+    # phi_x
+    if ("phi_x" %in% fit_bi_param_x) {
+      phi_x <- TRUE
+    } else {
+      phi_x <- FALSE
+    }
+    
+    fit_bi_param_y <- input$fit_bi_param_y
+    # alpha_constant_y
+    if ("alpha_constant_y" %in% fit_bi_param_y) {
+      alpha_constant_y <- TRUE
+    } else {
+      alpha_constant_y <- FALSE
+    }
+    # beta_y
+    if ("beta_y" %in% fit_bi_param_y) {
+      beta_y <- TRUE
+    } else {
+      beta_y <- FALSE
+    }
+    # phi_x
+    if ("phi_y" %in% fit_bi_param_y) {
+      phi_y <- TRUE
+    } else {
+      phi_y <- FALSE
+    }
+    
+    fit_bi_param_coupling <- input$fit_bi_param_coupling
+    # delta_con_xy
+    if ("delta_con_xy" %in% fit_bi_param_coupling) {
+      delta_con_xy <- TRUE
+    } else {
+      delta_con_xy <- FALSE
+    }
+    # delta_con_yx
+    if ("delta_con_yx" %in% fit_bi_param_coupling) {
+      delta_con_yx <- TRUE
+    } else {
+      delta_con_yx <- FALSE
+    }
+    # xi_con_xy
+    if ("xi_con_xy" %in% fit_bi_param_coupling) {
+      xi_con_xy <- TRUE
+    } else {
+      xi_con_xy <- FALSE
+    }
+    # xi_con_yx
+    if ("xi_con_yx" %in% fit_bi_param_coupling) {
+      xi_con_yx <- TRUE
+    } else {
+      xi_con_yx <- FALSE
+    }
+    
+    # delta_lag_xy
+    if ("delta_lag_xy" %in% fit_bi_param_coupling) {
+      delta_lag_xy <- TRUE
+    } else {
+      delta_lag_xy <- FALSE
+    }
+    # delta_lag_yx
+    if ("delta_lag_yx" %in% fit_bi_param_coupling) {
+      delta_lag_yx <- TRUE
+    } else {
+      delta_lag_yx <- FALSE
+    }
+    # xi_lag_xy
+    if ("xi_lag_xy" %in% fit_bi_param_coupling) {
+      xi_lag_xy <- TRUE
+    } else {
+      xi_lag_xy <- FALSE
+    }
+    # xi_lag_yx
+    if ("xi_lag_yx" %in% fit_bi_param_coupling) {
+      xi_lag_yx <- TRUE
+    } else {
+      xi_lag_yx <- FALSE
+    }
+    
+    specify_bi_lcsm(
+      timepoints = length(input$bi_select_vars_x),
+      var_x = "x",
+      model_x = list(
+        alpha_constant = alpha_constant_x,
+        beta = beta_x,
+        phi = phi_x
+      ),
+      var_y = "y",
+      model_y = list(
+        alpha_constant = alpha_constant_y,
+        beta = beta_y,
+        phi = phi_y
+      ),
+      coupling = list(
+        delta_con_xy = delta_con_xy,
+        delta_con_yx = delta_con_yx,
+        xi_con_xy = xi_con_xy,
+        xi_con_yx = xi_con_yx,
+        delta_lag_xy = delta_lag_xy,
+        delta_lag_yx = delta_lag_yx,
+        xi_lag_xy = xi_lag_xy,
+        xi_lag_yx = xi_lag_yx
+      ),
+      change_letter_x = "g",
+      change_letter_y = "j"
+    )
+  })
+
+  
+  # fit model ----
+  fit_bi_data_lcsm <- reactive({
+    
+    fit_bi_param_x <- input$fit_bi_param_x
+    # alpha_constant_x
+    if ("alpha_constant_x" %in% fit_bi_param_x) {
+      alpha_constant_x <- TRUE
+    } else {
+      alpha_constant_x <- FALSE
+    }
+    # beta_x
+    if ("beta_x" %in% fit_bi_param_x) {
+      beta_x <- TRUE
+    } else {
+      beta_x <- FALSE
+    }
+    # phi_x
+    if ("phi_x" %in% fit_bi_param_x) {
+      phi_x <- TRUE
+    } else {
+      phi_x <- FALSE
+    }
+    
+    fit_bi_param_y <- input$fit_bi_param_y
+    # alpha_constant_y
+    if ("alpha_constant_y" %in% fit_bi_param_y) {
+      alpha_constant_y <- TRUE
+    } else {
+      alpha_constant_y <- FALSE
+    }
+    # beta_y
+    if ("beta_y" %in% fit_bi_param_y) {
+      beta_y <- TRUE
+    } else {
+      beta_y <- FALSE
+    }
+    # phi_x
+    if ("phi_y" %in% fit_bi_param_y) {
+      phi_y <- TRUE
+    } else {
+      phi_y <- FALSE
+    }
+    
+    fit_bi_param_coupling <- input$fit_bi_param_coupling
+    # delta_con_xy
+    if ("delta_con_xy" %in% fit_bi_param_coupling) {
+      delta_con_xy <- TRUE
+    } else {
+      delta_con_xy <- FALSE
+    }
+    # delta_con_yx
+    if ("delta_con_yx" %in% fit_bi_param_coupling) {
+      delta_con_yx <- TRUE
+    } else {
+      delta_con_yx <- FALSE
+    }
+    # xi_con_xy
+    if ("xi_con_xy" %in% fit_bi_param_coupling) {
+      xi_con_xy <- TRUE
+    } else {
+      xi_con_xy <- FALSE
+    }
+    # xi_con_yx
+    if ("xi_con_yx" %in% fit_bi_param_coupling) {
+      xi_con_yx <- TRUE
+    } else {
+      xi_con_yx <- FALSE
+    }
+    
+    # delta_lag_xy
+    if ("delta_lag_xy" %in% fit_bi_param_coupling) {
+      delta_lag_xy <- TRUE
+    } else {
+      delta_lag_xy <- FALSE
+    }
+    # delta_lag_yx
+    if ("delta_lag_yx" %in% fit_bi_param_coupling) {
+      delta_lag_yx <- TRUE
+    } else {
+      delta_lag_yx <- FALSE
+    }
+    # xi_lag_xy
+    if ("xi_lag_xy" %in% fit_bi_param_coupling) {
+      xi_lag_xy <- TRUE
+    } else {
+      xi_lag_xy <- FALSE
+    }
+    # xi_lag_yx
+    if ("xi_lag_yx" %in% fit_bi_param_coupling) {
+      xi_lag_yx <- TRUE
+    } else {
+      xi_lag_yx <- FALSE
+    }
+
+    # Fit bivariate lcsm and save the results
+    fit_bi_lcsm(
+      data = fit_bi_data(),
+      var_x = input$bi_select_vars_x,
+      var_y = input$bi_select_vars_y,
+      model_x = list(
+        alpha_constant = alpha_constant_x,
+        beta = beta_x,
+        phi = phi_x
+      ),
+      model_y = list(
+        alpha_constant = alpha_constant_y,
+        beta = beta_y,
+        phi = phi_y
+      ),
+      coupling = list(
+        delta_con_xy = delta_con_xy,
+        delta_con_yx = delta_con_yx,
+        delta_lag_xy = delta_lag_xy,
+        delta_lag_yx = delta_lag_yx,
+        xi_con_yx = xi_con_yx,
+        xi_con_xy = xi_con_xy,
+        xi_lag_yx = xi_lag_yx,
+        xi_lag_xy = xi_lag_xy
+      )
+    )
+  })
   # 
-  # })
+  # 
+  # 
+  df_fit_bi_lcsm_param <- eventReactive(input$fit_bi_lcsm_go, {
+
+    withProgress(message = "Extracting parameters", value = 0, {
+
+      incProgress(1 / 6)
+
+      extract_param(fit_bi_data_lcsm())[ , 1:7]
+
+    })
+  })
+  # 
+  # 
+  # parameter table ----
+  output$fit_bi_lcsm_param <- DT::renderDataTable({
+
+    DT::datatable(df_fit_bi_lcsm_param(),
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE,
+                                 searching = FALSE,
+                                 dom = 'ft',
+                                 paging = FALSE)) %>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df_fit_bi_lcsm_param())
+      )
+  })
+  # 
+  # 
+  df_fit_bi_lcsm_fit_stats <- eventReactive(input$fit_bi_lcsm_go, {
+
+    withProgress(message = "Extracting fit statistics", value = 0, {
+
+      incProgress(1 / 6)
+
+      extract_fit(fit_bi_data_lcsm(), details = input$fit_bi_lcsm_fit_stats_details)[-1]
+
+    })
+  })
+  # 
+  # 
+  # fit table ----
+  output$fit_bi_lcsm_fit_stats <- DT::renderDataTable({
+
+    DT::datatable(df_fit_bi_lcsm_fit_stats(),
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE,
+                                 searching = FALSE,
+                                 dom = 'ft') )%>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df_fit_bi_lcsm_fit_stats())
+      )
+
+  })
+  
+  
+  
+  # fit_bi_param_x <- input$fit_bi_param_x
+  # # alpha_constant_x
+  # if ("alpha_constant_x" %in% fit_bi_param_x) {
+  #   alpha_constant_x <- TRUE
+  # } else {
+  #   alpha_constant_x <- FALSE
+  # }
+  # # beta_x
+  # if ("beta_x" %in% fit_bi_param_x) {
+  #   beta_x <- TRUE
+  # } else {
+  #   beta_x <- FALSE
+  # }
+  # # phi_x
+  # if ("phi_x" %in% fit_bi_param_x) {
+  #   phi_x <- TRUE
+  # } else {
+  #   phi_x <- FALSE
+  # }
+  # 
+  # fit_bi_param_y <- input$fit_bi_param_y
+  # # alpha_constant_y
+  # if ("alpha_constant_y" %in% fit_bi_param_y) {
+  #   alpha_constant_y <- TRUE
+  # } else {
+  #   alpha_constant_y <- FALSE
+  # }
+  # # beta_y
+  # if ("beta_y" %in% fit_bi_param_y) {
+  #   beta_y <- TRUE
+  # } else {
+  #   beta_y <- FALSE
+  # }
+  # # phi_x
+  # if ("phi_y" %in% fit_bi_param_y) {
+  #   phi_y <- TRUE
+  # } else {
+  #   phi_y <- FALSE
+  # }
+  # 
+  # fit_bi_param_coupling <- input$fit_bi_param_coupling
+  # # delta_con_xy
+  # if ("delta_con_xy" %in% fit_bi_param_coupling) {
+  #   delta_con_xy <- TRUE
+  # } else {
+  #   delta_con_xy <- FALSE
+  # }
+  # # delta_con_yx
+  # if ("delta_con_yx" %in% fit_bi_param_coupling) {
+  #   delta_con_yx <- TRUE
+  # } else {
+  #   delta_con_yx <- FALSE
+  # }
+  # # xi_con_xy
+  # if ("xi_con_xy" %in% fit_bi_param_coupling) {
+  #   xi_con_xy <- TRUE
+  # } else {
+  #   xi_con_xy <- FALSE
+  # }
+  # # xi_con_yx
+  # if ("xi_con_yx" %in% fit_bi_param_coupling) {
+  #   xi_con_yx <- TRUE
+  # } else {
+  #   xi_con_yx <- FALSE
+  # }
+  # 
+  # # delta_lag_xy
+  # if ("delta_lag_xy" %in% fit_bi_param_coupling) {
+  #   delta_lag_xy <- TRUE
+  # } else {
+  #   delta_lag_xy <- FALSE
+  # }
+  # # delta_lag_yx
+  # if ("delta_lag_yx" %in% fit_bi_param_coupling) {
+  #   delta_lag_yx <- TRUE
+  # } else {
+  #   delta_lag_yx <- FALSE
+  # }
+  # # xi_lag_xy
+  # if ("xi_lag_xy" %in% fit_bi_param_coupling) {
+  #   xi_lag_xy <- TRUE
+  # } else {
+  #   xi_lag_xy <- FALSE
+  # }
+  # # xi_lag_yx
+  # if ("xi_lag_yx" %in% fit_bi_param_coupling) {
+  #   xi_lag_yx <- TRUE
+  # } else {
+  #   xi_lag_yx <- FALSE
+  # }
+  # 
+  # # Fit bivariate lcsm and save the results
+  # fit_bi_lcsm(
+  #   data = fit_bi_data(),
+  #   var_x = input$bi_select_vars_x,
+  #   var_y = input$bi_select_vars_y,
+  #   model_x = list(
+  #     alpha_constant = alpha_constant_x,
+  #     beta = beta_x,
+  #     phi = phi_x
+  #   ),
+  #   model_y = list(
+  #     alpha_constant = alpha_constant_y,
+  #     beta = beta_y,
+  #     phi = phi_y
+  #   ),
+  #   coupling = list(
+  #     delta_con_xy = delta_con_xy,
+  #     delta_con_yx = delta_con_yx,
+  #     delta_lag_xy = delta_lag_xy,
+  #     delta_lag_yx = delta_lag_yx,
+  #     xi_con_yx = xi_con_yx,
+  #     xi_con_xy = xi_con_xy,
+  #     xi_lag_yx = xi_lag_yx,
+  #     xi_lag_xy = xi_lag_xy
+  #   )
+  # )
+  # 
+  # # Path diagram ----
+  output$plot_fit_bi_lcsm_path <- renderPlot({
+    withProgress(message = "Making plot", value = 0, {
+
+      fit_bi_param_x <- input$fit_bi_param_x
+  # alpha_constant_x
+  if ("alpha_constant_x" %in% fit_bi_param_x) {
+    alpha_constant_x <- TRUE
+  } else {
+    alpha_constant_x <- FALSE
+  }
+  # beta_x
+  if ("beta_x" %in% fit_bi_param_x) {
+    beta_x <- TRUE
+  } else {
+    beta_x <- FALSE
+  }
+  # phi_x
+  if ("phi_x" %in% fit_bi_param_x) {
+    phi_x <- TRUE
+  } else {
+    phi_x <- FALSE
+  }
+
+  fit_bi_param_y <- input$fit_bi_param_y
+  # alpha_constant_y
+  if ("alpha_constant_y" %in% fit_bi_param_y) {
+    alpha_constant_y <- TRUE
+  } else {
+    alpha_constant_y <- FALSE
+  }
+  # beta_y
+  if ("beta_y" %in% fit_bi_param_y) {
+    beta_y <- TRUE
+  } else {
+    beta_y <- FALSE
+  }
+  # phi_x
+  if ("phi_y" %in% fit_bi_param_y) {
+    phi_y <- TRUE
+  } else {
+    phi_y <- FALSE
+  }
+
+  fit_bi_param_coupling <- input$fit_bi_param_coupling
+  # delta_con_xy
+  if ("delta_con_xy" %in% fit_bi_param_coupling) {
+    delta_con_xy <- TRUE
+  } else {
+    delta_con_xy <- FALSE
+  }
+  # delta_con_yx
+  if ("delta_con_yx" %in% fit_bi_param_coupling) {
+    delta_con_yx <- TRUE
+  } else {
+    delta_con_yx <- FALSE
+  }
+  # xi_con_xy
+  if ("xi_con_xy" %in% fit_bi_param_coupling) {
+    xi_con_xy <- TRUE
+  } else {
+    xi_con_xy <- FALSE
+  }
+  # xi_con_yx
+  if ("xi_con_yx" %in% fit_bi_param_coupling) {
+    xi_con_yx <- TRUE
+  } else {
+    xi_con_yx <- FALSE
+  }
+
+  # delta_lag_xy
+  if ("delta_lag_xy" %in% fit_bi_param_coupling) {
+    delta_lag_xy <- TRUE
+  } else {
+    delta_lag_xy <- FALSE
+  }
+  # delta_lag_yx
+  if ("delta_lag_yx" %in% fit_bi_param_coupling) {
+    delta_lag_yx <- TRUE
+  } else {
+    delta_lag_yx <- FALSE
+  }
+  # xi_lag_xy
+  if ("xi_lag_xy" %in% fit_bi_param_coupling) {
+    xi_lag_xy <- TRUE
+  } else {
+    xi_lag_xy <- FALSE
+  }
+  # xi_lag_yx
+  if ("xi_lag_yx" %in% fit_bi_param_coupling) {
+    xi_lag_yx <- TRUE
+  } else {
+    xi_lag_yx <- FALSE
+  }
+  #     
+      incProgress(1 / 6)
+  #     
+      bi_lavaan_results <- fit_bi_lcsm(
+    data = fit_bi_data(),
+    var_x = input$bi_select_vars_x,
+    var_y = input$bi_select_vars_y,
+    model_x = list(
+      alpha_constant = alpha_constant_x,
+      beta = beta_x,
+      phi = phi_x
+    ),
+    model_y = list(
+      alpha_constant = alpha_constant_y,
+      beta = beta_y,
+      phi = phi_y
+    ),
+    coupling = list(
+      delta_con_xy = delta_con_xy,
+      delta_con_yx = delta_con_yx,
+      delta_lag_xy = delta_lag_xy,
+      delta_lag_yx = delta_lag_yx,
+      xi_con_yx = xi_con_yx,
+      xi_con_xy = xi_con_xy,
+      xi_lag_yx = xi_lag_yx,
+      xi_lag_xy = xi_lag_xy
+    )
+  )
+      
+      incProgress(2 / 3)
+      
+      bi_lavaan_syntax <- fit_bi_lcsm(
+        data = fit_bi_data(),
+        var_x = input$bi_select_vars_x,
+        var_y = input$bi_select_vars_y,
+        model_x = list(
+          alpha_constant = alpha_constant_x,
+          beta = beta_x,
+          phi = phi_x
+        ),
+        model_y = list(
+          alpha_constant = alpha_constant_y,
+          beta = beta_y,
+          phi = phi_y
+        ),
+        coupling = list(
+          delta_con_xy = delta_con_xy,
+          delta_con_yx = delta_con_yx,
+          delta_lag_xy = delta_lag_xy,
+          delta_lag_yx = delta_lag_yx,
+          xi_con_yx = xi_con_yx,
+          xi_con_xy = xi_con_xy,
+          xi_lag_yx = xi_lag_yx,
+          xi_lag_xy = xi_lag_xy
+        ),
+        ,
+                           return_lavaan_syntax = TRUE,
+                           return_lavaan_syntax_string = TRUE
+      )
+  #     
+   
+  #     
+
+  #     
+      incProgress(3 / 3)
+  #     
+      if (input$plot_fit_bi_lcsm_path_whatLabels == FALSE) {
+        plot_fit_bi_lcsm_path_whatLabels <- "invisible"
+      } else {
+        plot_fit_bi_lcsm_path_whatLabels <- "label"
+      }
+
+      if (input$plot_fit_bi_lcsm_path_colorgroups == FALSE) {
+        plot_lcsm(
+          lavaan_object = bi_lavaan_results,
+          lavaan_syntax = bi_lavaan_syntax,
+          lcsm = "bivariate",
+          whatLabels = plot_fit_bi_lcsm_path_whatLabels
+        )
+      } else {
+        plot_lcsm(
+          lavaan_object = bi_lavaan_results,
+          lavaan_syntax = bi_lavaan_syntax,
+          lcsm = "bivariate",
+          whatLabels = plot_fit_bi_lcsm_path_whatLabels,
+          groups = "latents",
+          borders = FALSE
+        )
+      }
+
+    })
+  })
+  
+  # OBSERVE -----
+  # I got errors when these ovserve were further up so I'll leave them down here for now
+  
+  observe({
+    
+    x <- names(fit_bi_data())
+    
+    # if only variables for 2 constructs are uploaded this will help select variables, otherwise it is a bit messy
+    # do this anyway bc it will help with the example dataset
+    x_length <- length(names(fit_bi_data()))
+    
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectInput(session, "bi_select_vars_x",
+                      # label = paste("Select input label", length(x)),
+                      choices = x,
+                      selected = x[2:(((x_length - 1) / 2) + 1)]
+    )
+    
+  })
+  
+  observe({
+    
+    x <- names(fit_bi_data())
+    
+    x_length <- length(names(fit_bi_data()))
+    
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectInput(session, "bi_select_vars_y",
+                      # label = paste("Select input label", length(x)),
+                      choices = x,
+                      selected = x[(((x_length - 1) / 2) + 2):x_length]
+    )
+    
+  })
+  
+  observe({
+    x <- names(fit_bi_data())
+    
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectInput(session, "bi_select_id",
+                      # label = paste("Select input label", length(x)),
+                      choices = x,
+                      selected = x[1]
+    )
+  })
+  
+  # @ FIT BIVARIATE END ----
+
+  
   
   
   

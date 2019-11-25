@@ -1,4 +1,4 @@
-# Shiny latent change score modeling in R
+# Shiny Tutorial on Latent Change Score Modeling in R
 
 This application illustrates some functions of the [lcsm](https://github.com/milanwiedemann/lcsm) R package.
 The main aim is to show how different univariate and bivariate latent change score models (lcsm) can be implemented in R using [lavaan](http://lavaan.ugent.be/) syntax (Rosseel,
@@ -10,7 +10,7 @@ This is still work in progress and feedback is very welcome.
 The code of the R package [lcsm](https://github.com/milanwiedemann/lcsm) and [this shiny app](https://github.com/milanwiedemann/shinychange) can be found on GitHub.
 Please contact me on [Twitter](https://twitter.com/milanwiedemann) or send me an [email](mailto:milan.wiedemann@gmail.com) with feedback.  
 
-### Installation of the R package lcsm
+### Installation of the R Package lcsm
 
 You can install the development version from
 [GitHub](https://github.com/milanwiedemann/lcsm) with:
@@ -20,7 +20,7 @@ You can install the development version from
 devtools::install_github("milanwiedemann/lcsm")
 ```
 
-### Related work
+### Related Work
 
 For details about this methods see for example 
 McArdle ([2009](http://www.annualreviews.org/doi/10.1146/annurev.psych.60.110707.163612)),
