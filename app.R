@@ -15,6 +15,227 @@ ui <- tagList(navbarPage(
            includeMarkdown("INCLUDEME.md")),
   
   # Simulate Data ----
+  # Generate univariate LCSM ----
+  navbarMenu(
+    "Generate lavaan Syntax",
+    tabPanel(
+      "Univariate LCSM",
+      column(width = 3,
+             h4("Options:"),
+             tabsetPanel(
+               tabPanel(
+                 "Data Characteristics",
+                 helpText(),
+                 # just a placeholder for a little bit top margin
+                 wellPanel(
+                   numericInput(
+                     "specify_uni_timepoints",
+                     "Measurement Points:",
+                     value = 5,
+                     min = 2
+                   ),
+                   helpText("Note: Number of repeated measurement points."),
+                   textInput("specify_uni_var_name", "Variable Name:", value = "x"),
+                   helpText(
+                     "Note: Variable name to be used for generating lavaan syntax, changes wont show on the path diagram.
+                     Variable name should start with a letter."
+                   )
+                 )
+               ),
+               tabPanel("Parameters",
+                        helpText(),  # just a placeholder for a little bit top margin
+                        wellPanel(
+                          checkboxGroupInput(
+                            "specify_uni_param",
+                            label = "Construct X",
+                            choices = list(
+                              "Constant change factor [alpha_g]" = "alpha_constant",
+                              "Proportional change factor [beta_x]" = "beta",
+                              "Autoregression of change scores [phi_x]" = "phi"
+                            ),
+                            selected = c("alpha_constant", "beta", "phi")
+                          )
+                        )
+                        )
+             )),
+      column(9,
+             h4("Results:"),
+             tabsetPanel(
+               tabPanel(
+                 "lavaan Syntax",
+                 helpText(
+                   "Note: lavaan syntax for the selected data characteristics and model parameters.
+                    This syntax includes comments describing the different sections of the model and can be modified by hand.
+                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
+                 ),
+                 verbatimTextOutput("lavaan_uni_lcsm")
+               ),
+               tabPanel(
+                 "Path Diagram",
+                 helpText(),
+                 # just a placeholder for a little bit top margin
+                 # wellPanel(
+                 fluidRow(column(
+                   4,
+                   checkboxInput(
+                     "plot_specify_uni_lcsm_path_whatLabels",
+                     "Show the parameter names as labels",
+                     value = TRUE,
+                     width = NULL
+                   )
+                 ),
+                 column(
+                   4,
+                   checkboxInput(
+                     "plot_specify_uni_lcsm_path_colorgroups",
+                     "I like colours",
+                     value = FALSE,
+                     width = NULL
+                   )
+                 )),
+                 fluidRow(column(
+                   8,
+                   plotOutput(
+                     "plot_specify_uni_lcsm_path",
+                     width = 900,
+                     height = 550
+                   )
+                 )),
+                 hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
+               )
+             ))
+    ),
+    # Generate bivariate LCSM ----
+    tabPanel(
+      "Bivariate LCSM",
+      column(width = 3,
+             h4("Options:"),
+             tabsetPanel(
+               tabPanel(
+                 "Data Characteristics",
+                 helpText(),
+                 # just a placeholder for a little bit top margin
+                 wellPanel(
+                   numericInput(
+                     "specify_bi_timepoints",
+                     "Measurement Points:",
+                     value = 5,
+                     min = 2
+                   ),
+                   helpText("Note: Number of repeated measurement points for each construct.")
+                 ),
+                 wellPanel(
+                   textInput("specify_bi_var_name_x", "Variable Name Construct X:", value = "x"),
+                   textInput("specify_var_name_y", "Variable Name Construct Y:", value = "y"),
+                   helpText(
+                     "Note: Variable names to be used for generating lavaan syntax, changes wont show on the path diagram.
+                     Variable names should start with a letter."
+                   )
+                 )
+               ),
+               tabPanel(
+                 "Parameters",
+                 helpText(),
+                 # just a placeholder for a little bit top margin
+                 wellPanel(
+                   checkboxGroupInput(
+                     "specify_bi_param_x",
+                     label = "Construct X:",
+                     choices = list(
+                       "Constant change factor [alpha_g]" = "alpha_constant_x",
+                       "Proportional change factor [beta_x]" = "beta_x",
+                       "Autoregression of change scores [phi_x]" = "phi_x"
+                     ),
+                     selected = c("alpha_constant_x", "beta_x", "phi_x")
+                   )
+                 ),
+                 wellPanel(
+                   checkboxGroupInput(
+                     "specify_bi_param_y",
+                     label = "Construct Y:",
+                     choices = list(
+                       "Constant change factor [alpha_j]" = "alpha_constant_y",
+                       "Proportional change factor [beta_y]" = "beta_y",
+                       "Autoregression of change scores [phi_y]" = "phi_y"
+                     ),
+                     selected = c("alpha_constant_y", "beta_y", "phi_y")
+                   )
+                 ),
+                 wellPanel(
+                   checkboxGroupInput(
+                     "specify_bi_param_coupling",
+                     label = "Coupling:",
+                     choices = list(
+                       "Change score x (t) determined by true score y (t) [delta_con_xy]" = "delta_con_xy",
+                       "Change score y (t) determined by true score x (t)  [delta_con_yx]" = "delta_con_yx",
+                       "Change score x (t) determined by true score y (t-1) [delta_lag_xy]" = "delta_lag_xy",
+                       "Change score y (t) determined by true score x (t-1) [delta_lag_yx]" = "delta_lag_yx",
+                       "Change score x (t) determined by change score y (t) [xi_con_xy]" = "xi_con_xy",
+                       "Change score y (t) determined by change score x (t) [xi_con_yx]" = "xi_con_yx",
+                       "Change score x (t) determined by change score y (t-1) [xi_lag_xy]" = "xi_lag_xy",
+                       "Change score y (t) determined by change score x (t-1) [xi_lag_yx]" = "xi_lag_yx"
+                     )
+                   )
+                 )
+               )
+             )),
+      column(9,
+             h4("Results:"),
+             tabsetPanel(
+               tabPanel(
+                 "lavaan Syntax",
+                 helpText(
+                   "Note: lavaan syntax for the selected data characteristics and model parameters.
+                    This syntax includes comments describing the different sections of the model and can be modified by hand.
+                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
+                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
+                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
+                 ),
+                 verbatimTextOutput("lavaan_bi_lcsm")
+               ),
+               tabPanel(
+                 "Path Diagram",
+                 helpText(),
+                 # just a placeholder for a little bit top margin
+                 # wellPanel(
+                 fluidRow(column(
+                   4,
+                   checkboxInput(
+                     "plot_specify_bi_lcsm_path_whatLabels",
+                     "Show the parameter names as labels",
+                     value = TRUE,
+                     width = NULL
+                   )
+                 ),
+                 column(
+                   4,
+                   checkboxInput(
+                     "plot_specify_bi_lcsm_path_colorgroups",
+                     "I like colours",
+                     value = FALSE,
+                     width = NULL
+                   )
+                 )),
+                 fluidRow(column(
+                   8,
+                   plotOutput(
+                     "plot_specify_bi_lcsm_path",
+                     width = 900,
+                     height = 550
+                   )
+                 )),
+                 hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
+               )
+             ))
+    )
+  ),
+  
   navbarMenu(
     "Simulate Data",
     # Simulate Univariate ----
@@ -117,7 +338,8 @@ ui <- tagList(navbarPage(
             downloadButton("download_uni_data", "Download")
           ),
           tabPanel("Longitudinal Plot",
-                   plotOutput("plot_sim_uni_lcsm")),
+                   plotOutput("plot_sim_uni_lcsm"),
+                   hr("Reference: Hadley Wickham (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.")),
           tabPanel(
             "lavaan Syntax",
             helpText(
@@ -159,7 +381,9 @@ ui <- tagList(navbarPage(
                 width = 900,
                 height = 550
               )
-            ))
+            )),
+            hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
           )
         )
       )
@@ -419,7 +643,8 @@ ui <- tagList(navbarPage(
           ),
           tabPanel(
             "Longitudinal Plots",
-            plotOutput("plot_sim_bi_lcsm", width = 850, height = 550)
+            plotOutput("plot_sim_bi_lcsm", width = 850, height = 550),
+            hr("Reference: Hadley Wickham (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.")
           ),
           tabPanel(
             "lavaan Syntax",
@@ -458,273 +683,173 @@ ui <- tagList(navbarPage(
             fluidRow(column(
               8,
               plotOutput("plot_sim_bi_lcsm_path", width = 900, height = 550)
-            ))
+            )),
+            hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
           )
         )
       )
     )
   ),
   # Fit univariate LCSM ----
-  # navbarMenu("Fit Model",
-  # tabPanel(
-  #   "Univariate LCSM",
-  #   sidebarPanel(
-  #     fileInput("file", "Load data:"),
-  #     actionButton("fit-uni-lcsm", "Fit model", class = "btn-primary")
-  #   ),
-  #   mainPanel(tabsetPanel(
-  #     tabPanel("Estimated parameters",
-  #              "This panel is intentionally left blank"),
-  #     tabPanel("Fit statistics",
-  #              "This panel is intentionally left blank"),
-  #     tabPanel("Longitudinal plot",
-  #              "This panel is intentionally left blank"),
-  #     # tabPanel("Path diagram",
-  #     #          "Not working yet."),
-  #     tabPanel("lavaan Syntax",
-  #              "This panel is intentionally left blank")
-  #   ))
-  # ),
-  # # Fit bivariate LCSM ----
-  # tabPanel("Bivariate LCSM",
-  #          sidebarPanel(
-  #            fileInput("file", "Load data:"),
-  #            actionButton("fit-bi-lcsm", "Fit model", class = "btn-primary")
-  #            ),
-  #          mainPanel(tabsetPanel(
-  #            tabPanel("Estimated parameters",
-  #                     "This panel is intentionally left blank"),
-  #            tabPanel("Fit statistics",
-  #                     "This panel is intentionally left blank"),
-  #            tabPanel("Longitudinal plot",
-  #                     "This panel is intentionally left blank"),
-  #            # tabPanel("Path diagram",
-  #            #          "Not working yet."),
-  #            tabPanel("lavaan Syntax",
-  #                     "This panel is intentionally left blank")
-  #            )
-  #            )
-  #          )
-  # ),
-  # Specify univariate LCSM ----
-  navbarMenu(
-    "Generate lavaan Syntax",
-    tabPanel(
-      "Univariate LCSM",
-      column(width = 3,
-             h4("Options:"),
-             tabsetPanel(
-               tabPanel(
-                 "Data Characteristics",
-                 helpText(),
-                 # just a placeholder for a little bit top margin
-                 wellPanel(
-                   numericInput(
-                     "specify_uni_timepoints",
-                     "Measurement Points:",
-                     value = 5,
-                     min = 2
-                   ),
-                   helpText("Note: Number of repeated measurement points."),
-                   textInput("specify_uni_var_name", "Variable Name:", value = "x"),
-                   helpText(
-                     "Note: Variable name to be used for generating lavaan syntax, changes wont show on the path diagram.
-                     Variable name should start with a letter."
+  navbarMenu("Fit Model",
+  tabPanel(
+    "Univariate LCSM",
+    column(width = 4, h4("Options:"),
+           tabsetPanel(
+             tabPanel("Load Data",
+                      helpText(),
+                      wellPanel(
+                        # Input: Select a file ---
+                        fileInput("file1", "Select CSV File",
+                                  multiple = TRUE,
+                                  accept = c("text/csv",
+                                             "text/comma-separated-values,text/plain",
+                                             ".csv")),
+                        # Input: Checkbox if file has header ---
+                        checkboxInput("header", "Variable names included", TRUE),
+                        
+                        # Input: Select separator ---
+                        radioButtons("sep", "Separator",
+                                     choices = c("Comma" = ",",
+                                                 "Semicolon" = ";",
+                                                 "Tab" = "\t"),
+                                     selected = ","),
+                        
+                        # Input: Select quotes ---
+                        radioButtons("quote", "Quote",
+                                     choices = c(None = "",
+                                                 "Double Quote" = '"',
+                                                 "Single Quote" = "'"),
+                                     selected = '"'),
+                        
+                        # Horizontal line ---
+                        tags$hr(),
+                          checkboxInput("uni_sample_data_check", "Select Example Data", T)
+      )
+      ),
+      tabPanel("Select Variables",
+               helpText(),  # just a placeholder for a little bit top margin
+               wellPanel(
+                 # numericInput(
+                 #   "fit_uni_timepoints",
+                 #   "Measurement Points:",
+                 #   value = 10,
+                 #   min = 2
+                 # ),
+                 
+                 selectInput("uni_select_id", "Select ID Variable:", c("Variable 1", "Variable 2", "Variable 3"),  multiple = FALSE
+                 ),
+                 
+                 selectInput("uni_select_vars", "Select Construct x Variables:", c("Variable 1", "Variable 2", "Variable 3"),  multiple = TRUE
+                              )
+
+               )
+               ),
+      tabPanel("Select Parameters",
+               helpText(),  # just a placeholder for a little bit top margin
+               wellPanel(
+                 checkboxGroupInput(
+                   "fit_uni_param",
+                   label = "Construct X",
+                   choices = list(
+                     "Constant change factor [alpha_g]" = "alpha_constant",
+                     "Proportional change factor [beta_x]" = "beta",
+                     "Autoregression of change scores [phi_x]" = "phi"
                    )
                  )
                ),
-               tabPanel("Parameters",
-                        helpText(),  # just a placeholder for a little bit top margin
-                        wellPanel(
-                          checkboxGroupInput(
-                            "specify_uni_param",
-                            label = "Construct X",
-                            choices = list(
-                              "Constant change factor [alpha_g]" = "alpha_constant",
-                              "Proportional change factor [beta_x]" = "beta",
-                              "Autoregression of change scores [phi_x]" = "phi"
-                            ),
-                            selected = c("alpha_constant", "beta", "phi")
-                          )
-                        ))
-             )),
-      column(9,
-             h4("Results:"),
-             tabsetPanel(
-               tabPanel(
-                 "lavaan Syntax",
-                 helpText(
-                   "Note: lavaan syntax for the selected data characteristics and model parameters.
-                    This syntax includes comments describing the different sections of the model and can be modified by hand.
-                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
-                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
-                    Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
-                    Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
-                 ),
-                 verbatimTextOutput("lavaan_uni_lcsm")
-               ),
-               tabPanel(
-                 "Path Diagram",
-                 helpText(),
-                 # just a placeholder for a little bit top margin
-                 # wellPanel(
-                 fluidRow(column(
-                   4,
-                   checkboxInput(
-                     "plot_specify_uni_lcsm_path_whatLabels",
-                     "Show the parameter names as labels",
-                     value = TRUE,
-                     width = NULL
-                   )
-                 ),
-                 column(
-                   4,
-                   checkboxInput(
-                     "plot_specify_uni_lcsm_path_colorgroups",
-                     "I like colours",
-                     value = FALSE,
-                     width = NULL
-                   )
-                 )),
-                 fluidRow(column(
-                   8,
-                   plotOutput(
-                     "plot_specify_uni_lcsm_path",
-                     width = 900,
-                     height = 550
-                   )
-                 ))
-               )
-             ))
+               actionButton("fit-uni-lcsm", "Fit model", class = "btn-primary")
+      )
+      
+      )
     ),
-    # Specify bivariate LCSM ----
-    tabPanel(
-      "Bivariate LCSM",
-      column(width = 3,
-             h4("Options:"),
-             tabsetPanel(
-               tabPanel(
-                 "Data Characteristics",
-                 helpText(),
-                 # just a placeholder for a little bit top margin
-                 wellPanel(
-                   numericInput(
-                     "specify_bi_timepoints",
-                     "Measurement Points:",
-                     value = 5,
-                     min = 2
-                   ),
-                   helpText("Note: Number of repeated measurement points for each construct.")
-                 ),
-                 wellPanel(
-                   textInput("specify_bi_var_name_x", "Variable Name Construct X:", value = "x"),
-                   textInput("specify_var_name_y", "Variable Name Construct Y:", value = "y"),
-                   helpText(
-                     "Note: Variable names to be used for generating lavaan syntax, changes wont show on the path diagram.
-                     Variable names should start with a letter."
-                   )
-                 )
-               ),
-               tabPanel(
-                 "Parameters",
-                 helpText(),
-                 # just a placeholder for a little bit top margin
-                 wellPanel(
-                   checkboxGroupInput(
-                     "specify_bi_param_x",
-                     label = "Construct X:",
-                     choices = list(
-                       "Constant change factor [alpha_g]" = "alpha_constant_x",
-                       "Proportional change factor [beta_x]" = "beta_x",
-                       "Autoregression of change scores [phi_x]" = "phi_x"
-                     ),
-                     selected = c("alpha_constant_x", "beta_x", "phi_x")
-                   )
-                 ),
-                 wellPanel(
-                   checkboxGroupInput(
-                     "specify_bi_param_y",
-                     label = "Construct Y:",
-                     choices = list(
-                       "Constant change factor [alpha_j]" = "alpha_constant_y",
-                       "Proportional change factor [beta_y]" = "beta_y",
-                       "Autoregression of change scores [phi_y]" = "phi_y"
-                     ),
-                     selected = c("alpha_constant_y", "beta_y", "phi_y")
-                   )
-                 ),
-                 wellPanel(
-                   checkboxGroupInput(
-                     "specify_bi_param_coupling",
-                     label = "Coupling:",
-                     choices = list(
-                       "Change score x (t) determined by true score y (t) [delta_con_xy]" = "delta_con_xy",
-                       "Change score y (t) determined by true score x (t)  [delta_con_yx]" = "delta_con_yx",
-                       "Change score x (t) determined by true score y (t-1) [delta_lag_xy]" = "delta_lag_xy",
-                       "Change score y (t) determined by true score x (t-1) [delta_lag_yx]" = "delta_lag_yx",
-                       "Change score x (t) determined by change score y (t) [xi_con_xy]" = "xi_con_xy",
-                       "Change score y (t) determined by change score x (t) [xi_con_yx]" = "xi_con_yx",
-                       "Change score x (t) determined by change score y (t-1) [xi_lag_xy]" = "xi_lag_xy",
-                       "Change score y (t) determined by change score x (t-1) [xi_lag_yx]" = "xi_lag_yx"
-                     )
-                   )
-                 )
-               )
-             )),
-      column(9,
-             h4("Results:"),
-             tabsetPanel(
-               tabPanel(
-                 "lavaan Syntax",
-                 helpText(
-                   "Note: lavaan syntax for the selected data characteristics and model parameters.
+    column(8, h4("Results:"),
+      tabsetPanel(
+      tabPanel("Data",
+               helpText("Note: Values are rounded to the third decimal place."),  # just a placeholder for a little bit top margin
+               
+               DT::dataTableOutput("contents")),
+      tabPanel(
+        "lavaan Syntax",
+        helpText(
+          "Note: lavaan syntax for the selected data characteristics and model parameters.
                     This syntax includes comments describing the different sections of the model and can be modified by hand.
                     Modified syntax could be used in the 'model' argument of functions from the lavaan package.
                     Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
                     Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
                     Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
-                 ),
-                 verbatimTextOutput("lavaan_bi_lcsm")
+        ),
+        verbatimTextOutput("lavaan_fit_uni_lcsm")
+      ),
+      tabPanel("Estimated Parameters",
+               helpText(),
+               DT::dataTableOutput("fit_uni_lcsm_param"),
+               hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.")
                ),
-               tabPanel(
-                 "Path Diagram",
-                 helpText(),
-                 # just a placeholder for a little bit top margin
-                 # wellPanel(
-                 fluidRow(column(
-                   4,
-                   checkboxInput(
-                     "plot_specify_bi_lcsm_path_whatLabels",
-                     "Show the parameter names as labels",
-                     value = TRUE,
-                     width = NULL
-                   )
-                 ),
-                 column(
-                   4,
-                   checkboxInput(
-                     "plot_specify_bi_lcsm_path_colorgroups",
-                     "I like colours",
-                     value = FALSE,
-                     width = NULL
-                   )
-                 )),
-                 fluidRow(column(
-                   8,
-                   plotOutput(
-                     "plot_specify_bi_lcsm_path",
-                     width = 900,
-                     height = 550
-                   )
-                 ))
-               )
-             ))
-    )
+      tabPanel("Fit Statistics",
+               helpText(),
+               fluidRow(column(
+                                  4,
+                                  checkboxInput(
+                                    "fit_uni_lcsm_fit_stats_details",
+                                    "Show details",
+                                    value = FALSE,
+                                    width = NULL
+                                  )
+                                )
+                        ),
+                                fluidRow(column(
+                                  8,
+
+               DT::dataTableOutput("fit_uni_lcsm_fit_stats"),
+               hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.")
+               ))),
+      tabPanel("Longitudinal Plot",
+               plotOutput("plot_fit_uni_lcsm"),
+               hr("Reference: Hadley Wickham (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.")),
+      tabPanel(
+        "Path Diagram",
+        helpText(),
+        # just a placeholder for a little bit top margin
+        # wellPanel(
+        fluidRow(column(
+          4,
+          checkboxInput(
+            "plot_fit_uni_lcsm_path_whatLabels",
+            "Show the parameter names as labels",
+            value = TRUE,
+            width = NULL
+          )
+        ),
+        column(
+          4,
+          checkboxInput(
+            "plot_fit_uni_lcsm_path_colorgroups",
+            "I like colours",
+            value = FALSE,
+            width = NULL
+          )
+        )),
+        fluidRow(column(
+          8,
+          plotOutput("plot_fit_uni_lcsm_path", width = 900, height = 550)
+        )),
+        hr("Reference: Sacha Epskamp (2019). semPlot: Path Diagrams and Visual Analysis of Various SEM Packages' Output. R package version 1.1.2.
+  https://CRAN.R-project.org/package=semPlot.")
+      )
+    ))
+  ),
+  # Fit bivariate LCSM ----
+  tabPanel("Bivariate LCSM",
+           )
   )
 ))
 
 # server ----
-server <- function(input, output) {
+server <- function(input, output, session) {
   # Specify univariate syntax ----
   output$lavaan_uni_lcsm <- renderText({
     specify_uni_param <- input$specify_uni_param
@@ -2211,6 +2336,309 @@ server <- function(input, output) {
     }
     
   })
+  
+  
+  
+  # Fit models ----
+  # Univariate ----
+  
+  fit_uni_data <- reactive({ 
+    # input$file1 will be NULL initially. After the user selects
+    # and uploads a file, head of that data file by default,
+    # or all rows if selected, will be shown.
+    
+    if (input$uni_sample_data_check == FALSE) {
+      
+      req(input$file1)
+      
+      read.csv(input$file1$datapath,
+                     header = input$header,
+                     sep = input$sep,
+                     quote = input$quote)
+      
+    } else {
+      lcsm::data_uni_lcsm
+    }
+    })
+  
+  output$contents <- DT::renderDataTable({
+    
+   df <-  fit_uni_data() %>% 
+      select(input$uni_select_id, input$uni_select_vars)
+
+    DT::datatable(df,
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE)) %>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df)
+      )
+  })
+  
+  # Longitudinal plot ----
+  
+  output$plot_fit_uni_lcsm <- renderPlot({
+     fit_uni_data() %>% 
+    plot_trajectories(.,
+      id_var = input$uni_select_id,
+      var_list = input$uni_select_vars,
+      xlab = "Time",
+      ylab = "Construct X",
+      connect_missing = FALSE,
+      random_sample_frac = 1
+    ) +
+    theme(axis.text = element_text(size = 16),
+          axis.title = element_text(size = 16, face = "bold"))
+  })
+  
+  output$lavaan_fit_uni_lcsm <- renderText({
+    fit_uni_param <- input$fit_uni_param
+    # alpha_constant
+    if ("alpha_constant" %in% fit_uni_param) {
+      alpha_constant <- TRUE
+    } else {
+      alpha_constant <- FALSE
+    }
+    # beta
+    if ("beta" %in% fit_uni_param) {
+      beta <- TRUE
+    } else {
+      beta <- FALSE
+    }
+    # phi
+    if ("phi" %in% fit_uni_param) {
+      phi <- TRUE
+    } else {
+      phi <- FALSE
+    }
+    
+    # Create lavaan syntax
+    specify_uni_lcsm(
+      timepoints = length(input$uni_select_vars),
+      model = list(
+        alpha_constant = alpha_constant,
+        beta = beta,
+        phi = phi
+      ),
+      var = "x",
+      change_letter = "g"
+    )
+  })
+  
+  
+  
+  
+  
+  fit_uni_data_lcsm <- reactive({ 
+    
+    fit_uni_param <- input$fit_uni_param
+    # alpha_constant
+    if ("alpha_constant" %in% fit_uni_param) {
+      alpha_constant <- TRUE
+    } else {
+      alpha_constant <- FALSE
+    }
+    # beta
+    if ("beta" %in% fit_uni_param) {
+      beta <- TRUE
+    } else {
+      beta <- FALSE
+    }
+    # phi
+    if ("phi" %in% fit_uni_param) {
+      phi <- TRUE
+    } else {
+      phi <- FALSE
+    }
+
+    fit_uni_data() %>% 
+    fit_uni_lcsm(data = ., 
+                 var =  input$uni_select_vars,
+                 model = list(alpha_constant = alpha_constant, 
+                              beta = beta, 
+                              phi = phi))
+  })
+  
+  
+  
+  # parameter table ----
+  output$fit_uni_lcsm_param <- DT::renderDataTable({
+    
+    withProgress(message = "Extracting parameters", value = 0, {
+      incProgress(1 / 6)
+    df <- extract_param(fit_uni_data_lcsm())[ , 1:7]
+    incProgress(6 / 6)
+    }) 
+    DT::datatable(df,
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE,
+                                 searching = FALSE,
+                                 dom = 'ft'))%>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df)
+      )
+  })
+  
+  
+  # fit table ----
+  output$fit_uni_lcsm_fit_stats <- DT::renderDataTable({
+    
+    withProgress(message = "Extracting fit statistics", value = 0, {
+    incProgress(1 / 6)
+    df <- extract_fit(fit_uni_data_lcsm(), details = input$fit_uni_lcsm_fit_stats_details)[-1]
+    incProgress(6 / 6)
+    }) 
+    DT::datatable(df,
+                  rownames = FALSE,
+                  extensions = 'FixedColumns',
+                  options = list(pageLength = 10,
+                                 scrollX = TRUE,
+                                 fixedColumns = TRUE,
+                                 searching = FALSE,
+                                 dom = 'ft'))%>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df)
+      )
+
+    })
+  
+  # Path diagram ----
+  output$plot_fit_uni_lcsm_path <- renderPlot({
+    withProgress(message = "Making plot", value = 0, {
+     
+      fit_uni_param <- input$fit_uni_param
+      # alpha_constant
+      if ("alpha_constant" %in% fit_uni_param) {
+        alpha_constant <- TRUE
+      } else {
+        alpha_constant <- FALSE
+      }
+      # beta
+      if ("beta" %in% fit_uni_param) {
+        beta <- TRUE
+      } else {
+        beta <- FALSE
+      }
+      # phi
+      if ("phi" %in% fit_uni_param) {
+        phi <- TRUE
+      } else {
+        phi <- FALSE
+      }
+      
+      incProgress(1 / 6)
+      
+      uni_lavaan_results <- fit_uni_data() %>% 
+        fit_uni_lcsm(data = ., 
+                     var =  input$uni_select_vars,
+                     model = list(alpha_constant = alpha_constant, 
+                                  beta = beta, 
+                                  phi = phi))
+      
+      incProgress(2 / 3)
+      
+      uni_lavaan_syntax <- fit_uni_data() %>% 
+        fit_uni_lcsm(data = ., 
+                     var =  input$uni_select_vars,
+                     model = list(alpha_constant = alpha_constant, 
+                                  beta = beta, 
+                                  phi = phi),
+                     return_lavaan_syntax = TRUE,
+                     return_lavaan_syntax_string = TRUE)
+
+      incProgress(3 / 3)
+      
+      if (input$plot_fit_uni_lcsm_path_whatLabels == FALSE) {
+        plot_fit_uni_lcsm_path_whatLabels <- "invisible"
+      } else {
+        plot_fit_uni_lcsm_path_whatLabels <- "label"
+      }
+      
+      if (input$plot_fit_uni_lcsm_path_colorgroups == FALSE) {
+        plot_lcsm(
+          lavaan_object = uni_lavaan_results,
+          lavaan_syntax = uni_lavaan_syntax,
+          lcsm = "univariate",
+          whatLabels = plot_fit_uni_lcsm_path_whatLabels
+        )
+      } else {
+        plot_lcsm(
+          lavaan_object = uni_lavaan_results,
+          lavaan_syntax = uni_lavaan_syntax,
+          lcsm = "univariate",
+          whatLabels = plot_fit_uni_lcsm_path_whatLabels,
+          groups = "latents",
+          borders = FALSE
+        )
+      }
+      
+    })
+  })
+
+  
+  
+  
+  # OBSERVE -----
+  # I got errors when these ovserve were further up so I'll leave them down here for now
+  
+  observe({
+
+      
+      x <- names(fit_uni_data())
+      
+      # Can use character(0) to remove all choices
+      if (is.null(x))
+        x <- character(0)
+      
+      # Can also set the label and select items
+      updateSelectInput(session, "uni_select_vars",
+                        # label = paste("Select input label", length(x)),
+                        choices = x,
+                        selected = x[2]
+      )
+
+  })
+  
+  observe({
+    x <- names(fit_uni_data())
+    
+    # Can use character(0) to remove all choices
+    if (is.null(x))
+      x <- character(0)
+    
+    # Can also set the label and select items
+    updateSelectInput(session, "uni_select_id",
+                      # label = paste("Select input label", length(x)),
+                      choices = x,
+                      selected = x[1]
+    )
+  })
+  
+  
+  # update time points based on number of vars selected ... doesnt really work at the moment, dont knw why
+  # observe({
+  #   updateNumericInput(session, "fit_uni_timepoints",
+  #                      value = length(names(fit_uni_data())) - 1
+  #                      )
+  # 
+  # })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
+
+
+
+
+
 
 shinyApp(ui = ui, server = server)
