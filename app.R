@@ -725,7 +725,7 @@ ui <- tagList(navbarPage(
                         
                         # Horizontal line ---
                         tags$hr(),
-                          checkboxInput("uni_sample_data_check", "Select Example Data", T)
+                          checkboxInput("uni_sample_data_check", "Select Example Data", F)
       )
       ),
       tabPanel("Select Variables",
@@ -741,9 +741,9 @@ ui <- tagList(navbarPage(
                  selectInput("uni_select_id", "Select ID Variable:", c("Variable 1", "Variable 2", "Variable 3"),  multiple = FALSE
                  ),
                  
-                 selectInput("uni_select_vars", "Select Construct x Variables:", c("Variable 1", "Variable 2", "Variable 3"),  multiple = TRUE
-                              )
-
+                 selectInput("uni_select_vars", "Select Construct X Variables:", c("Variable 1", "Variable 2", "Variable 3"),  multiple = TRUE
+                              ),
+                 helpText("Select variables in the order that reflects the time points they were measured (i.e. variable with values of the first measuresment of construct X is selected first).")
                )
                ),
       tabPanel("Select Parameters",
@@ -758,11 +758,12 @@ ui <- tagList(navbarPage(
                      "Autoregression of change scores [phi_x]" = "phi"
                    )
                  )
-               ),
-               actionButton("fit-uni-lcsm", "Fit model", class = "btn-primary")
+               )
       )
       
-      )
+      ),
+      
+      actionButton("fit_uni_lcsm_go", "Fit model", class = "btn-primary")
     ),
     column(8, h4("Results:"),
       tabsetPanel(
@@ -773,23 +774,22 @@ ui <- tagList(navbarPage(
       tabPanel(
         "lavaan Syntax",
         helpText(
-          "Note: lavaan syntax for the selected data characteristics and model parameters.
-                    This syntax includes comments describing the different sections of the model and can be modified by hand.
-                    Modified syntax could be used in the 'model' argument of functions from the lavaan package.
-                    Observed scores in the syntax are the variable name followed by a number indicating the measurement point.
+          "Note: Based on the selected variables and parameters the lavaan syntax below was used to fit a univariate latent change score model.
+           The selected variable names were renamed starting with x1 in the order they were selected in the 'Select Variables for Construct X' box.
+                    Observed scores in the syntax are 'x' followed by a number indicating the measurement point.
                     Latent true scores have the prefix 'l' (for latent) followed by the variable name of the observed score.
                     Change scores have the prefix 'd' (for delta) followed by the variable name of the observed score."
         ),
         verbatimTextOutput("lavaan_fit_uni_lcsm")
       ),
       tabPanel("Estimated Parameters",
-               helpText(),
+               helpText("Click 'Fit model' on the left to fit a univariate LCSM and extract the estimated model parameters."),
                DT::dataTableOutput("fit_uni_lcsm_param"),
                hr("Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
   https://CRAN.R-project.org/package=broom.")
                ),
       tabPanel("Fit Statistics",
-               helpText(),
+               helpText("Click 'Fit model' on the left to fit a univariate LCSM and extract the fit statistics."),
                fluidRow(column(
                                   4,
                                   checkboxInput(
@@ -2462,44 +2462,58 @@ server <- function(input, output, session) {
   
   
   
+  df_fit_uni_lcsm_param <- eventReactive(input$fit_uni_lcsm_go, {
+    
+    withProgress(message = "Extracting parameters", value = 0, {
+      
+      incProgress(1 / 6)
+      
+      extract_param(fit_uni_data_lcsm())[ , 1:7]
+
+    }) 
+  })
+  
+  
   # parameter table ----
   output$fit_uni_lcsm_param <- DT::renderDataTable({
     
-    withProgress(message = "Extracting parameters", value = 0, {
-      incProgress(1 / 6)
-    df <- extract_param(fit_uni_data_lcsm())[ , 1:7]
-    incProgress(6 / 6)
-    }) 
-    DT::datatable(df,
+    DT::datatable(df_fit_uni_lcsm_param(),
                   rownames = FALSE,
                   extensions = 'FixedColumns',
                   options = list(pageLength = 10,
                                  scrollX = TRUE,
                                  fixedColumns = TRUE,
                                  searching = FALSE,
-                                 dom = 'ft'))%>%
-      DT::formatRound(digits = 3, columns = 2:ncol(df)
+                                 dom = 'ft')) %>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df_fit_uni_lcsm_param())
       )
+  })
+  
+  
+  df_fit_uni_lcsm_fit_stats <- eventReactive(input$fit_uni_lcsm_go, {
+    
+    withProgress(message = "Extracting fit statistics", value = 0, {
+      
+      incProgress(1 / 6)
+      
+      extract_fit(fit_uni_data_lcsm(), details = input$fit_uni_lcsm_fit_stats_details)[-1]
+      
+    }) 
   })
   
   
   # fit table ----
   output$fit_uni_lcsm_fit_stats <- DT::renderDataTable({
     
-    withProgress(message = "Extracting fit statistics", value = 0, {
-    incProgress(1 / 6)
-    df <- extract_fit(fit_uni_data_lcsm(), details = input$fit_uni_lcsm_fit_stats_details)[-1]
-    incProgress(6 / 6)
-    }) 
-    DT::datatable(df,
+    DT::datatable(df_fit_uni_lcsm_fit_stats(),
                   rownames = FALSE,
                   extensions = 'FixedColumns',
                   options = list(pageLength = 10,
                                  scrollX = TRUE,
                                  fixedColumns = TRUE,
                                  searching = FALSE,
-                                 dom = 'ft'))%>%
-      DT::formatRound(digits = 3, columns = 2:ncol(df)
+                                 dom = 'ft') )%>%
+      DT::formatRound(digits = 3, columns = 2:ncol(df_fit_uni_lcsm_fit_stats())
       )
 
     })
@@ -2596,7 +2610,7 @@ server <- function(input, output, session) {
       updateSelectInput(session, "uni_select_vars",
                         # label = paste("Select input label", length(x)),
                         choices = x,
-                        selected = x[2]
+                        selected = x[2:length(names(fit_uni_data()))]
       )
 
   })
