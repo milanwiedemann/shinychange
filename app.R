@@ -30,7 +30,7 @@ ui <- tagList(
     )
   ),
   navbarPage(
-    "lcsm",
+    "shinychange",
     # Overview ----
     tabPanel("Overview",
              includeMarkdown("INCLUDEME.md")),
@@ -113,7 +113,7 @@ ui <- tagList(
                      4,
                      checkboxInput(
                        "plot_specify_uni_lcsm_path_colorgroups",
-                       "I like colours",
+                       "I like rainbows",
                        value = FALSE,
                        width = NULL
                      )
@@ -240,7 +240,7 @@ ui <- tagList(
                      4,
                      checkboxInput(
                        "plot_specify_bi_lcsm_path_colorgroups",
-                       "I like colours",
+                       "I like rainbows",
                        value = FALSE,
                        width = NULL
                      )
@@ -398,7 +398,7 @@ ui <- tagList(
                 4,
                 checkboxInput(
                   "plot_sim_uni_lcsm_path_colorgroups",
-                  "I like colours",
+                  "I like rainbows",
                   value = FALSE,
                   width = NULL
                 )
@@ -703,7 +703,7 @@ ui <- tagList(
                 4,
                 checkboxInput(
                   "plot_sim_bi_lcsm_path_colorgroups",
-                  "I like colours",
+                  "I like rainbows",
                   value = FALSE,
                   width = NULL
                 )
@@ -847,8 +847,12 @@ ui <- tagList(
               ),
               DT::dataTableOutput("fit_uni_lcsm_param"),
               hr(
-                "Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
-  https://CRAN.R-project.org/package=broom."
+                tags$div(
+                  "References:", tags$br(),
+                  "David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.", tags$br(),
+                  "Yves Rosseel (2012). lavaan: An R Package for Structural Equation Modeling. Journal of Statistical Software, 48(2), 1-36. URL
+  http://www.jstatsoft.org/v48/i02/.")
               )
             ),
             tabPanel(
@@ -865,15 +869,18 @@ ui <- tagList(
                   width = NULL
                 )
               )),
-              fluidRow(column(
-                8,
+              fluidRow(
                 
                 DT::dataTableOutput("fit_uni_lcsm_fit_stats"),
                 hr(
-                  "Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
-  https://CRAN.R-project.org/package=broom."
+                  tags$div(
+                    "References:", tags$br(),
+                    "David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.", tags$br(),
+                    "Yves Rosseel (2012). lavaan: An R Package for Structural Equation Modeling. Journal of Statistical Software, 48(2), 1-36. URL
+  http://www.jstatsoft.org/v48/i02/.")
                 )
-              ))
+              )
             ),
             tabPanel(
               "Longitudinal Plot",
@@ -900,7 +907,7 @@ ui <- tagList(
                 4,
                 checkboxInput(
                   "plot_fit_uni_lcsm_path_colorgroups",
-                  "I like colours",
+                  "I like rainbows",
                   value = FALSE,
                   width = NULL
                 )
@@ -1099,8 +1106,12 @@ ui <- tagList(
               ),
               DT::dataTableOutput("fit_bi_lcsm_param"),
               hr(
-                "Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
-  https://CRAN.R-project.org/package=broom."
+                tags$div(
+                  "References:", tags$br(),
+                  "David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.", tags$br(),
+                  "Yves Rosseel (2012). lavaan: An R Package for Structural Equation Modeling. Journal of Statistical Software, 48(2), 1-36. URL
+  http://www.jstatsoft.org/v48/i02/.")
               )
             ),
             tabPanel(
@@ -1117,15 +1128,17 @@ ui <- tagList(
                   width = NULL
                 )
               )),
-              fluidRow(column(
-                8,
-                
+              fluidRow(
                 DT::dataTableOutput("fit_bi_lcsm_fit_stats"),
                 hr(
-                  "Reference: David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
-  https://CRAN.R-project.org/package=broom."
+                  tags$div(
+                    "References:", tags$br(),
+                    "David Robinson and Alex Hayes (2019). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.2.
+  https://CRAN.R-project.org/package=broom.", tags$br(),
+                    "Yves Rosseel (2012). lavaan: An R Package for Structural Equation Modeling. Journal of Statistical Software, 48(2), 1-36. URL
+  http://www.jstatsoft.org/v48/i02/.")
                 )
-              ))
+              )
             ),
             tabPanel(
               "Longitudinal Plots",
@@ -1152,7 +1165,7 @@ ui <- tagList(
                 4,
                 checkboxInput(
                   "plot_fit_bi_lcsm_path_colorgroups",
-                  "I like colours",
+                  "I like rainbows",
                   value = FALSE,
                   width = NULL
                 )
@@ -1405,7 +1418,12 @@ server <- function(input, output, session) {
     DT::renderDataTable(
       DT::datatable(
         simulate_uni_lcsm(),
-        options = list(searching = FALSE),
+        options = list(
+          pageLength = 10,
+          scrollX = TRUE,
+          fixedColumns = TRUE,
+          searching = FALSE
+          ),
         rownames = FALSE
       ) %>%
         DT::formatRound(
@@ -1905,7 +1923,12 @@ server <- function(input, output, session) {
     DT::renderDataTable(
       DT::datatable(
         simulate_bi_lcsm(),
-        options = list(searching = FALSE),
+        options = list(
+          pageLength = 10,
+          scrollX = TRUE,
+          fixedColumns = TRUE,
+          searching = FALSE
+        ),
         rownames = FALSE
       ) %>%
         DT::formatRound(
@@ -2690,7 +2713,8 @@ server <- function(input, output, session) {
       options = list(
         pageLength = 10,
         scrollX = TRUE,
-        fixedColumns = TRUE
+        fixedColumns = TRUE,
+        searching = FALSE
       )
     ) %>%
       DT::formatRound(digits = 3, columns = 2:ncol(df))
@@ -2798,7 +2822,7 @@ server <- function(input, output, session) {
       rownames = FALSE,
       extensions = 'FixedColumns',
       options = list(
-        pageLength = 10,
+        pageLength = 15,
         scrollX = TRUE,
         fixedColumns = TRUE,
         searching = FALSE,
@@ -2835,7 +2859,7 @@ server <- function(input, output, session) {
       )
     ) %>%
       DT::formatRound(digits = 3,
-                      columns = 2:ncol(df_fit_uni_lcsm_fit_stats()))
+                      columns = 1:ncol(df_fit_uni_lcsm_fit_stats()))
   })
   
   # Path diagram ----
@@ -2985,7 +3009,8 @@ server <- function(input, output, session) {
       options = list(
         pageLength = 10,
         scrollX = TRUE,
-        fixedColumns = TRUE
+        fixedColumns = TRUE,
+        searching = FALSE
       )
     ) %>%
       DT::formatRound(digits = 3, columns = 2:ncol(df))
@@ -3329,7 +3354,7 @@ server <- function(input, output, session) {
       )
     ) %>%
       DT::formatRound(digits = 3,
-                      columns = 2:ncol(df_fit_bi_lcsm_fit_stats()))
+                      columns = 1:ncol(df_fit_bi_lcsm_fit_stats()))
     
   })
   
