@@ -1,4 +1,4 @@
-# Shiny Tutorial on Latent Change Score Modeling in R
+# shinychange: An Interactive Tutorial on Latent Change Score Modeling in R
 
 The main aim of this interavtive tutorial is to show how different univariate and bivariate latent change score models (lcsm) can be implemented in R using [lavaan](http://lavaan.ugent.be/) syntax (Rosseel,[2012](http://www.jstatsoft.org/v48/i02)).
 
