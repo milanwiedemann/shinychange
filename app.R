@@ -738,11 +738,31 @@ ui <- tagList(
                 fileInput(
                   "file1",
                   "Select CSV File",
-                  multiple = TRUE,
+                  multiple = FALSE,
                   accept = c("text/csv",
                              "text/comma-separated-values,text/plain",
                              ".csv")
                 ),
+                
+                textInput(inputId =  "file1_url",
+                          label = "Load CSV from URL",
+                          placeholder = "Enter URL to CSV file here"
+                ),
+                
+                hr(),
+                
+                
+                
+                checkboxInput("uni_sample_data_check", "Load Example Data 1", FALSE),
+                # make this radio buttins, second example could be a url, e.g. grimm data
+                # do same for bivariate models ....
+                # checkboxInput("uni_sample2_data_check", "Load Example Data 2", FALSE),
+                
+                helpText(
+                  "Note: Select a CSV file, enter a URL, or load an example data set by ticking one of the boxes above."
+                )),
+                
+                wellPanel(
                 # Input: Checkbox if file has header ---
                 checkboxInput("header", "Variable names included", TRUE),
                 # Input: Select separator ---
@@ -766,12 +786,6 @@ ui <- tagList(
                     "Single Quote" = "'"
                   ),
                   selected = '"'
-                ),
-                # Horizontal line ---
-                tags$hr(),
-                checkboxInput("uni_sample_data_check", "Load Example Data", FALSE),
-                helpText(
-                  "Note: Select a CSV file or load the example data by ticking the box above."
                 )
               )
             ),
