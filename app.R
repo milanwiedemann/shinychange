@@ -1593,23 +1593,14 @@ server <- function(input, output, session) {
       plot_sim_uni_lcsm_path_whatLabels <- "label"
     }
     
-    if (input$plot_sim_uni_lcsm_path_colorgroups == FALSE) {
-      plot_lcsm(
-        lavaan_object = uni_lavaan_results,
-        lavaan_syntax = uni_lavaan_syntax,
-        lcsm = "univariate",
-        whatLabels = plot_sim_uni_lcsm_path_whatLabels
-      )
-    } else {
       plot_lcsm(
         lavaan_object = uni_lavaan_results,
         lavaan_syntax = uni_lavaan_syntax,
         lcsm = "univariate",
         whatLabels = plot_sim_uni_lcsm_path_whatLabels,
-        groups = "latents",
-        borders = FALSE
+       lcsm_colours =  input$plot_sim_uni_lcsm_path_colorgroups
       )
-    }
+
     
   })
   
@@ -1737,23 +1728,14 @@ server <- function(input, output, session) {
     }
     
     
-    if (input$plot_specify_uni_lcsm_path_colorgroups == FALSE) {
-      plot_lcsm(
-        lavaan_object = uni_lavaan_results,
-        lavaan_syntax = uni_lavaan_syntax,
-        lcsm = "univariate",
-        whatLabels = plot_specify_uni_lcsm_path_whatLabels
-      )
-    } else {
       plot_lcsm(
         lavaan_object = uni_lavaan_results,
         lavaan_syntax = uni_lavaan_syntax,
         lcsm = "univariate",
         whatLabels = plot_specify_uni_lcsm_path_whatLabels,
-        groups = "latents",
-        borders = FALSE
+        lcsm_colours = input$plot_specify_uni_lcsm_path_colorgroups
       )
-    }
+
     
   })
   
@@ -2330,23 +2312,14 @@ server <- function(input, output, session) {
     }
     
     
-    if (input$plot_sim_bi_lcsm_path_colorgroups == FALSE) {
-      plot_lcsm(
-        lavaan_object = bi_lavaan_results,
-        lavaan_syntax = bi_lavaan_syntax,
-        lcsm = "bivariate",
-        whatLabels = plot_sim_bi_lcsm_path_whatLabels
-      )
-    } else {
       plot_lcsm(
         lavaan_object = bi_lavaan_results,
         lavaan_syntax = bi_lavaan_syntax,
         lcsm = "bivariate",
         whatLabels = plot_sim_bi_lcsm_path_whatLabels,
-        groups = "latents",
-        borders = FALSE
+        lcsm_colours = input$plot_sim_bi_lcsm_path_colorgroups
       )
-    }
+
   })
   
   # Path diagram ----
@@ -2673,23 +2646,14 @@ server <- function(input, output, session) {
       plot_specify_bi_lcsm_path_whatLabels <- "label"
     }
     
-    if (input$plot_specify_bi_lcsm_path_colorgroups == FALSE) {
-      plot_lcsm(
-        lavaan_object = bi_lavaan_results,
-        lavaan_syntax = bi_lavaan_syntax,
-        lcsm = "bivariate",
-        whatLabels = plot_specify_bi_lcsm_path_whatLabels
-      )
-    } else {
       plot_lcsm(
         lavaan_object = bi_lavaan_results,
         lavaan_syntax = bi_lavaan_syntax,
         lcsm = "bivariate",
         whatLabels = plot_specify_bi_lcsm_path_whatLabels,
-        groups = "latents",
-        borders = FALSE
+        lcsm_colours = input$plot_specify_bi_lcsm_path_colorgroups
       )
-    }
+    
   })
 
   # Fit models ----
@@ -2935,24 +2899,14 @@ server <- function(input, output, session) {
         plot_fit_uni_lcsm_path_whatLabels <- "label"
       }
       
-      if (input$plot_fit_uni_lcsm_path_colorgroups == FALSE) {
-        plot_lcsm(
-          lavaan_object = uni_lavaan_results,
-          lavaan_syntax = uni_lavaan_syntax,
-          lcsm = "univariate",
-          whatLabels = plot_fit_uni_lcsm_path_whatLabels
-        )
-      } else {
         plot_lcsm(
           lavaan_object = uni_lavaan_results,
           lavaan_syntax = uni_lavaan_syntax,
           lcsm = "univariate",
           whatLabels = plot_fit_uni_lcsm_path_whatLabels,
-          groups = "latents",
-          borders = FALSE
+          lcsm_colours = input$plot_fit_uni_lcsm_path_colorgroups
         )
-      }
-      
+     
     })
   })
   
@@ -3532,23 +3486,13 @@ server <- function(input, output, session) {
         plot_fit_bi_lcsm_path_whatLabels <- "label"
       }
       
-      if (input$plot_fit_bi_lcsm_path_colorgroups == FALSE) {
-        plot_lcsm(
-          lavaan_object = bi_lavaan_results,
-          lavaan_syntax = bi_lavaan_syntax,
-          lcsm = "bivariate",
-          whatLabels = plot_fit_bi_lcsm_path_whatLabels
-        )
-      } else {
         plot_lcsm(
           lavaan_object = bi_lavaan_results,
           lavaan_syntax = bi_lavaan_syntax,
           lcsm = "bivariate",
           whatLabels = plot_fit_bi_lcsm_path_whatLabels,
-          groups = "latents",
-          borders = FALSE
+          lcsm_colours = input$plot_fit_bi_lcsm_path_colorgroups
         )
-      }
       
     })
   })
