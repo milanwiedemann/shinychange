@@ -32,7 +32,7 @@ ui <- tagList(
   navbarPage(
     "shinychange",
     # Overview ----
-    tabPanel("Overview",
+    tabPanel(paste0("Overview ", emo::ji("books")),
              includeMarkdown("INCLUDEME.md")),
     # Simulate Data ----
     # Generate univariate LCSM ----
