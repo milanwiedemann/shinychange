@@ -1,5 +1,7 @@
 library(shiny)
 # devtools::install_github("milanwiedemann/lcsm")
+# devtools::install_github("hadley/emo")
+library(emo)
 library(lcsm)
 library(lavaan)
 library(dplyr)
@@ -734,9 +736,12 @@ ui <- tagList(
               "Load Data",
               helpText(),
               wellPanel(
+                helpText(
+                  "Note: Select a CSV file or load the example data by ticking the box at the bottom."
+                ),
                 # Input: Select a file ---
                 fileInput(
-                  "file1",
+                  "file_uni",
                   "Select CSV File",
                   multiple = FALSE,
                   accept = c("text/csv",
@@ -744,25 +749,10 @@ ui <- tagList(
                              ".csv")
                 ),
                 
-                textInput(inputId =  "file1_url",
-                          label = "Load CSV from URL",
-                          placeholder = "Enter URL to CSV file here"
-                ),
-                
-                hr(),
-                
-                
-                
-                checkboxInput("uni_sample_data_check", "Load Example Data 1", FALSE),
-                # make this radio buttins, second example could be a url, e.g. grimm data
-                # do same for bivariate models ....
-                # checkboxInput("uni_sample2_data_check", "Load Example Data 2", FALSE),
-                
-                helpText(
-                  "Note: Select a CSV file, enter a URL, or load an example data set by ticking one of the boxes above."
-                )),
-                
-                wellPanel(
+                # textInput(inputId =  "file_uni_url",
+                #           label = "Load CSV from URL",
+                #           placeholder = "Enter URL to CSV file here"
+                # ),
                 # Input: Checkbox if file has header ---
                 checkboxInput("header", "Variable names included", TRUE),
                 # Input: Select separator ---
@@ -787,6 +777,31 @@ ui <- tagList(
                   ),
                   selected = '"'
                 )
+                
+                
+                ),
+                
+                wellPanel(
+
+                
+                
+                
+                
+                
+                
+                
+                checkboxInput("uni_sample_data_check", "Load Example Data 1", FALSE),
+                # make this radio buttins, second example could be a url, e.g. grimm data
+                # do same for bivariate models ....
+                # checkboxInput("uni_sample2_data_check", "Load Example Data 2", FALSE),
+                
+                helpText(
+                  "Note: Tick this box to select the example data set."
+                )
+                
+                
+                
+                
               )
             ),
             tabPanel(
@@ -808,6 +823,8 @@ ui <- tagList(
                 helpText(
                   "Select variables in the order that reflects the time points they were measured (i.e. variable with values of the first measuresment of construct X is selected first)."
                 )
+                
+                
               )
             ),
             tabPanel(
@@ -953,6 +970,9 @@ ui <- tagList(
               "Load Data",
               helpText(),
               wellPanel(
+                helpText(
+                  "Note: Select a CSV file or load the example data by ticking the box at the bottom."
+                ),
                 # Input: Select a file ---
                 fileInput(
                   "file_bi",
@@ -962,6 +982,11 @@ ui <- tagList(
                              "text/comma-separated-values,text/plain",
                              ".csv")
                 ),
+                
+                # textInput(inputId =  "file_bi_url",
+                #           label = "Load CSV from URL",
+                #           placeholder = "Enter URL to CSV file"
+                # ),
                 # Input: Checkbox if file has header ---
                 checkboxInput("header", "Variable names included", TRUE),
                 
@@ -986,12 +1011,12 @@ ui <- tagList(
                     "Single Quote" = "'"
                   ),
                   selected = '"'
-                ),
+                )),
                 # Horizontal line
-                tags$hr(),
+                wellPanel(
                 checkboxInput("bi_sample_data_check", "Load Example Data", FALSE),
                 helpText(
-                  "Note: Select a CSV file or load the example data by ticking the box above."
+                  "Note: Tick this box to select the example data set."
                 )
               )
             ),
@@ -1486,7 +1511,7 @@ server <- function(input, output, session) {
     sim_uni_lcsm(
       timepoints = input$sim_uni_timepoints,
       return_lavaan_syntax = TRUE,
-      return_lavaan_syntax_string = TRUE,
+      #return_lavaan_syntax_string = TRUE,
       model = list(
         alpha_constant = sim_uni_model_alpha_constant_x,
         beta = sim_uni_model_beta_x,
@@ -1580,8 +1605,8 @@ server <- function(input, output, session) {
           beta = sim_uni_model_beta_x,
           phi = sim_uni_model_phi_x
         ),
-        return_lavaan_syntax = TRUE,
-        return_lavaan_syntax_string = TRUE
+        return_lavaan_syntax = TRUE
+        #return_lavaan_syntax_string = TRUE
       )
       
       incProgress(3 / 3)
@@ -1714,8 +1739,8 @@ server <- function(input, output, session) {
           beta = beta,
           phi = phi
         ),
-        return_lavaan_syntax = TRUE,
-        return_lavaan_syntax_string = TRUE
+        return_lavaan_syntax = TRUE
+        #return_lavaan_syntax_string = TRUE
       )
       
       incProgress(3 / 3)
@@ -2046,7 +2071,7 @@ server <- function(input, output, session) {
     sim_bi_lcsm(
       timepoints = input$sim_bi_timepoints,
       return_lavaan_syntax = TRUE,
-      return_lavaan_syntax_string = TRUE,
+      #return_lavaan_syntax_string = TRUE,
       na_x_pct = input$sim_bi_na_x_pct / 100,
       na_y_pct = input$sim_bi_na_y_pct / 100,
       model_x = list(
@@ -2298,8 +2323,8 @@ server <- function(input, output, session) {
           xi_lag_yx = sim_bi_model_xi_lag_yx,
           xi_lag_xy = sim_bi_model_xi_lag_xy
         ),
-        return_lavaan_syntax = TRUE,
-        return_lavaan_syntax_string = TRUE
+        return_lavaan_syntax = TRUE
+        #return_lavaan_syntax_string = TRUE
       )
       
       incProgress(3 / 3)
@@ -2634,8 +2659,8 @@ server <- function(input, output, session) {
           xi_lag_yx = xi_lag_yx,
           xi_lag_xy = xi_lag_xy
         ),
-        return_lavaan_syntax = TRUE,
-        return_lavaan_syntax_string = TRUE
+        return_lavaan_syntax = TRUE
+        #return_lavaan_syntax_string = TRUE
       )
       incProgress(3 / 3)
     })
@@ -2661,15 +2686,15 @@ server <- function(input, output, session) {
   # @ FIT UNIVARIATE START -----
   
   fit_uni_data <- reactive({
-    # input$file1 will be NULL initially. After the user selects
+    # input$file_uni will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
     # or all rows if selected, will be shown.
     
     if (input$uni_sample_data_check == FALSE) {
-      req(input$file1)
+      req(input$file_uni)
       
       read.csv(
-        input$file1$datapath,
+        input$file_uni$datapath,
         header = input$header,
         sep = input$uni_sep,
         quote = input$uni_quote
@@ -2887,8 +2912,8 @@ server <- function(input, output, session) {
             beta = beta,
             phi = phi
           ),
-          return_lavaan_syntax = TRUE,
-          return_lavaan_syntax_string = TRUE
+          return_lavaan_syntax = TRUE
+          #return_lavaan_syntax_string = TRUE
         )
       
       incProgress(3 / 3)
@@ -2945,7 +2970,7 @@ server <- function(input, output, session) {
   
   # @ FIT BIVARIATE START ----
   fit_bi_data <- reactive({
-    # input$file1 will be NULL initially. After the user selects
+    # input$file_bi will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
     # or all rows if selected, will be shown.
     
@@ -3474,8 +3499,8 @@ server <- function(input, output, session) {
           xi_lag_yx = xi_lag_yx,
           xi_lag_xy = xi_lag_xy
         ),
-        return_lavaan_syntax = TRUE,
-        return_lavaan_syntax_string = TRUE
+        return_lavaan_syntax = TRUE
+        #return_lavaan_syntax_string = TRUE
       )
       
       incProgress(3 / 3)
